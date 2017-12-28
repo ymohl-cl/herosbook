@@ -1,0 +1,438 @@
+{
+	"info": {
+		"name": "herosbook",
+		"_postman_id": "7442f620-fdf4-c9b0-94b7-107f096916fd",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "home",
+			"description": "",
+			"item": [
+				{
+					"name": "Home page",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:1323/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1323",
+							"path": [
+								""
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "connect",
+			"description": "",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:1323/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1323",
+							"path": [
+								"login"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:1323/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1323",
+							"path": [
+								"login"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"description": "",
+			"item": [
+				{
+					"name": "get users list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:1323/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1323",
+							"path": [
+								"users"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "get user by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:1323/users/42",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1323",
+							"path": [
+								"users",
+								"42"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "create user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:1323/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1323",
+							"path": [
+								"users"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "edit user by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:1323/users/42",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1323",
+							"path": [
+								"users",
+								"42"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "delete user by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:1323/users/42",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1323",
+							"path": [
+								"users",
+								"42"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "books",
+			"description": "",
+			"item": [
+				{
+					"name": "contents",
+					"description": "",
+					"item": [
+						{
+							"name": "get all contents book",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:1323/books/42/contents",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1323",
+									"path": [
+										"books",
+										"42",
+										"contents"
+									]
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "get content specified by id for the book identifier",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:1323/books/42/contents/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1323",
+									"path": [
+										"books",
+										"42",
+										"contents",
+										"2"
+									]
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "create content to the book",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:1323/books/42/contents",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1323",
+									"path": [
+										"books",
+										"42",
+										"contents"
+									]
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "edit content",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:1323/books/42/contents/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1323",
+									"path": [
+										"books",
+										"42",
+										"contents",
+										"2"
+									]
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "delete content",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:1323/books/42/contents/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1323",
+									"path": [
+										"books",
+										"42",
+										"contents",
+										"2"
+									]
+								},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "get books headers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:1323/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1323",
+							"path": [
+								"books"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "get book header by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:1323/books/42",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1323",
+							"path": [
+								"books",
+								"42"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "create book",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:1323/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1323",
+							"path": [
+								"books"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "edit book by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:1323/books/42",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1323",
+							"path": [
+								"books",
+								"42"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "delete book by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:1323/books/42",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1323",
+							"path": [
+								"books",
+								"42"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
