@@ -6,32 +6,32 @@ import (
 )
 
 // Descriptions of all routes
-func Descriptions(e *echo.Echo) {
+func Descriptions(e *echo.Echo, h *handlers.Handler) {
 	// Home page
-	e.GET("/", handlers.Home)
+	e.GET("/", h.Home)
 
 	// connect managment
-	e.POST("/login", handlers.Connect)
-	e.DELETE("/login", handlers.Disconnect)
+	e.POST("/login", h.Connect)
+	e.DELETE("/login", h.Disconnect)
 
 	// users managment
-	e.GET("/users", handlers.GetUsers)
-	e.GET("/users/:id", handlers.GetUser)
-	e.POST("/users", handlers.CreateUser)
-	e.PUT("/users/:id", handlers.EditUser)
-	e.DELETE("/users/:id", handlers.DeleteUser)
+	e.GET("/users", h.GetUsers)
+	e.GET("/users/:id", h.GetUser)
+	e.POST("/users", h.CreateUser)
+	e.PUT("/users/:id", h.EditUser)
+	e.DELETE("/users/:id", h.DeleteUser)
 
 	// book managment
-	e.GET("/books", handlers.GetBooks)
-	e.GET("/books/:id", handlers.GetBook)
-	e.POST("/books", handlers.CreateBook)
-	e.PUT("/books/:id", handlers.EditBook)
-	e.DELETE("/books/:id", handlers.DeleteBook)
+	e.GET("/books", h.GetBooks)
+	e.GET("/books/:id", h.GetBook)
+	e.POST("/books", h.CreateBook)
+	e.PUT("/books/:id", h.EditBook)
+	e.DELETE("/books/:id", h.DeleteBook)
 
 	// content book managment
-	e.GET("/books/:id/contents", handlers.GetContentsBook)
-	e.GET("/books/:id/contents/:idc", handlers.GetContentBook)
-	e.POST("/books/:id/contents", handlers.CreateContentBook)
-	e.PUT("/books/:id/contents/:idc", handlers.EditContentBook)
-	e.DELETE("/books/:id/contents/:idc", handlers.DeleteContentBook)
+	e.GET("/books/:id/contents", h.GetContentsBook)
+	e.GET("/books/:id/contents/:idc", h.GetContentBook)
+	e.POST("/books/:id/contents", h.CreateContentBook)
+	e.PUT("/books/:id/contents/:idc", h.EditContentBook)
+	e.DELETE("/books/:id/contents/:idc", h.DeleteContentBook)
 }

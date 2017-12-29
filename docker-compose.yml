@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+    herosbook:
+        image: debian
+        volumes:
+            - "./Bin/:/bin"
+        command: /bin/herosbook
+        links:
+            - mongo:mongo
+            - postgres:postgres
+        ports:
+            - 1323:1323
+    mongo:
+        image: mongo:latest
+        ports:
+            - 27017:27017
+    postgres:
+        image: postgres:latest
+        restart: always
+        environment:
+            - POSTGRES_DB=herosbook_database
+            - POSTGRES_USER=user_example
+            - POSTGRES_PASSWORD=pass_example
+        volumes:
+            - "./Data/psql/:/docker-entrypoint-initdb.d/"
+        ports:
+            - 5432:5432
