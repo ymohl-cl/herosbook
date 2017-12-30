@@ -12,5 +12,9 @@
 		"sslmode": "verify-full",
 		"host": "pstgres",
 		"port": "5432"
+	},
+	"cassandra": {
+		"clusters": ["cassandra:9042"],
+		"keyspace": "herosbook"
 	}
 }

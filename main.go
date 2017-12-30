@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/gocql/gocql"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	_ "github.com/lib/pq"
@@ -15,7 +16,8 @@ import (
 func main() {
 	var err error
 	var c *config.Config
-	var db *sql.DB
+	var dbSQL *sql.DB
+	var dbCQL *gocql.Session
 
 	// Set validation structure
 	govalidator.SetFieldsRequiredByDefault(true)
@@ -25,13 +27,20 @@ func main() {
 		panic(err)
 	}
 
-	// sql.DB instace
-	if db, err = c.Psql.Init(); err != nil {
+	// sql.DB instance
+	if dbSQL, err = c.Psql.Init(); err != nil {
 		panic(err)
 	}
+	defer dbSQL.Close()
+
+	// gocql.DB instance
+	if dbCQL, err = c.Cass.Init(); err != nil {
+		panic(err)
+	}
+	defer dbCQL.Close()
 
 	// Handler instance and Echo instace
-	h := handlers.New(db)
+	h := handlers.New(dbSQL, dbCQL)
 	e := echo.New()
 
 	// Middleware

@@ -6,12 +6,14 @@ import (
 	"os"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/gocql/gocql"
 )
 
 // Config : content file config_example.json
 type Config struct {
-	API  Service  `json:"api" valid:"required"`
-	Psql Postgres `json:"psql" valid:"required"`
+	API  Service   `json:"api" valid:"required"`
+	Psql Postgres  `json:"psql" valid:"required"`
+	Cass Cassandra `json:"cassandra" valid:"required"`
 }
 
 // Service : infos on the service
@@ -21,7 +23,7 @@ type Service struct {
 	Domain string `json:"domain" valid:"required"`
 }
 
-// Postgres : infos on the drive postgres sql
+// Postgres : infos on driver postgres sql
 type Postgres struct {
 	DriverName string `json:"driver" valid:"required"`
 	User       string `json:"user" valid:"required"`
@@ -30,6 +32,12 @@ type Postgres struct {
 	Ssl        string `json:"sslmode" valid:"required"`
 	HostName   string `json:"host" valid:"required"`
 	Port       string `json:"port" valid:"required"`
+}
+
+// Cassandra : infos on driver cassandra cql
+type Cassandra struct {
+	Clusters []string `json:"clusters" valid:"required"`
+	Keyspace string   `json:"keyspace" valid:"required"`
 }
 
 // New : instance configuration
@@ -87,4 +95,23 @@ func (p Postgres) Init() (*sql.DB, error) {
 		return nil, err
 	}
 	return psql, nil
+}
+
+// Init Cassandra cql
+func (c Cassandra) Init() (*gocql.Session, error) {
+	var session *gocql.Session
+	var err error
+
+	// create clusters
+	cluster := gocql.NewCluster(c.Clusters...)
+	cluster.Consistency = gocql.LocalOne
+	cluster.ProtoVersion = 4
+	cluster.Keyspace = c.Keyspace
+
+	// get session
+	if session, err = cluster.CreateSession(); err != nil {
+		return nil, err
+	}
+
+	return session, nil
 }

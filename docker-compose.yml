@@ -7,14 +7,19 @@ services:
             - "./Bin/:/bin"
         command: /bin/herosbook
         links:
-            - mongo:mongo
+            - cassandra:cassandra
             - postgres:postgres
         ports:
             - 1323:1323
-    mongo:
-        image: mongo:latest
+    cassandra:
+        image: cassandra:latest
+        restart: always
         ports:
-            - 27017:27017
+            - 9042:9042
+        volumes:
+            - "./Data/cassandra/:/opt/data/"
+        entrypoint:
+            - /opt/data/entrypoint-cassandra.sh
     postgres:
         image: postgres:latest
         restart: always

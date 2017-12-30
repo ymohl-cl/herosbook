@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 
+	"github.com/gocql/gocql"
 	"github.com/labstack/echo"
 	"github.com/ymohl-cl/herosbook/controller"
 	"github.com/ymohl-cl/herosbook/controller/users"
@@ -11,13 +12,13 @@ import (
 
 // Handler contains drivers to execute query
 type Handler struct {
-	psql *sql.DB
-	//mongo
+	psql      *sql.DB
+	cassandra *gocql.Session
 }
 
 // New : _
-func New(p *sql.DB) *Handler {
-	return &Handler{psql: p}
+func New(p *sql.DB, c *gocql.Session) *Handler {
+	return &Handler{psql: p, cassandra: c}
 }
 
 /*
