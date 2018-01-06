@@ -13,6 +13,9 @@
 				{
 					"name": "Home page",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"body": {},
@@ -39,7 +42,29 @@
 			"item": [
 				{
 					"name": "login",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "00184fed-6759-4128-8943-4b72672130f2",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "api-key",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {},
@@ -131,9 +156,27 @@
 				{
 					"name": "create user",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "api-key",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
-						"header": [],
-						"body": {},
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"passwords\": {\n\t\t\"password_1\":\"password\",\n\t\t\"password_2\":\"password\"\n\t},\n\t\"informations\": {\n    \t\"pseudo\":\"MrPiou\",\n    \t\"age\": 27,\n    \t\"sex\":\"male\",\n    \t\"email\":\"cloclo@gmail.com\"\n\t}\n}"
+						},
 						"url": {
 							"raw": "https://localhost:1323/users",
 							"protocol": "https",
@@ -152,9 +195,27 @@
 				{
 					"name": "edit user by id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "api-key",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
-						"header": [],
-						"body": {},
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"passwords\": {\n\t\t\"password_1\":\"password4\",\n\t\t\"password_2\":\"password4\",\n\t\t\"oldPassword\":\"password4\"\n\t},\n    \"informations\": {\n        \"age\": 27,\n        \"email\": \"clouzade@gmail.com\",\n        \"pseudo\": \"MrPiou\",\n        \"sex\": \"male\"\n    },\n    \"public_id\": {\n        \"id\": \"071eae27-82c9-4d26-a1d0-fda7a975ef8d\"\n    }\n}"
+						},
 						"url": {
 							"raw": "https://localhost:1323/users/42",
 							"protocol": "https",

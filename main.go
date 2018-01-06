@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/gocql/gocql"
@@ -12,6 +13,23 @@ import (
 	"github.com/ymohl-cl/herosbook/handlers"
 	"github.com/ymohl-cl/herosbook/routes"
 )
+
+func Skip(c echo.Context) bool {
+	fmt.Println("Skip ? ", c.Path())
+	if c.Path() == "/" {
+		fmt.Println("equal")
+		return true
+	}
+	fmt.Println("not equal")
+	return false
+}
+
+func Test(s string, c echo.Context) (bool, error) {
+	if s == "api-key" {
+		return true, nil
+	}
+	return false, nil
+}
 
 func main() {
 	var err error
@@ -46,6 +64,13 @@ func main() {
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	//	e.Use(middleware.KeyAuth(Test))
+
+	e.Use(middleware.KeyAuthWithConfig(middleware.KeyAuthConfig{
+		Skipper:   Skip,
+		KeyLookup: "header:Authorization",
+		Validator: Test,
+	}))
 
 	// defines routes
 	routes.Descriptions(e, h)

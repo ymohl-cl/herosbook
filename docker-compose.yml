@@ -27,6 +27,9 @@ services:
             - POSTGRES_DB=herosbook_database
             - POSTGRES_USER=user_example
             - POSTGRES_PASSWORD=pass_example
+        build:
+            context: Data/dockerfiles
+            dockerfile: postgres
         volumes:
             - "./Data/psql/:/docker-entrypoint-initdb.d/"
         ports:

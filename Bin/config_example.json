@@ -9,8 +9,8 @@
 		"user": "user_example",
 		"password": "pass_example",
 		"db": "herosbook_database",
-		"sslmode": "verify-full",
-		"host": "pstgres",
+		"sslmode": "disable",
+		"host": "postgres",
 		"port": "5432"
 	},
 	"cassandra": {
