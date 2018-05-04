@@ -1,4 +1,4 @@
-package account
+package cassandra
 
 import (
 	"database/sql"

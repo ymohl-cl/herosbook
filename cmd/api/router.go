@@ -1,12 +1,16 @@
-package routes
+package main
 
 import (
 	"github.com/labstack/echo"
-	"github.com/ymohl-cl/herosbook/handlers"
+	"github.com/ymohl-cl/herosbook/cmd/api/handler"
 )
 
-// Descriptions of all routes
-func Descriptions(e *echo.Echo, h *handlers.Handler) {
+func setRoutes(e *echo.Echo) {
+	var h *handlers.Handler
+
+	// how define the great authorization to access ressources ?
+	// middleware with user and role
+	// yep but how link the user with the ressources without context ?
 	// Home page
 	e.GET("/", h.Home)
 
