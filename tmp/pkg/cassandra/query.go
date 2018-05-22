@@ -1,12 +1,6 @@
 package cassandra
 
-import (
-	"database/sql"
-	"fmt"
-
-	"github.com/gocql/gocql"
-)
-
+/*
 func (a *Account) newUser(psql *sql.DB, password []byte) error {
 	if err := psql.QueryRow(`INSERT INTO users(
 		pseudo,
@@ -35,34 +29,6 @@ func (a *Account) newSalt(cql *gocql.Session, salt []byte) error {
 	return nil
 }
 
-func (a Account) updateUser(psql *sql.DB) error {
-	if _, err := psql.Exec(`UPDATE users SET
-		pseudo = $1,
-		age = $2,
-		sex = $3,
-		email = $4 WHERE id_public = $5`,
-		a.user.Infos.Pseudo,
-		a.user.Infos.Age,
-		a.user.Infos.Sex,
-		a.user.Infos.Email,
-		a.user.ID.Value); err != nil {
-		fmt.Println("update user ERROR")
-		return err
-	}
-
-	return nil
-}
-
-func (a Account) updatePassword(psql *sql.DB, password []byte) error {
-	if _, err := psql.Exec(`UPDATE users SET
- 		password = $1 WHERE id_public = $2`,
-		password,
-		a.user.ID.Value); err != nil {
-		fmt.Println("PASS ERROR")
-		return err
-	}
-	return nil
-}
 
 func (a Account) updateSalt(cql *gocql.Session, salt []byte) error {
 	if err := cql.Query(`UPDATE herosbook.users SET
@@ -91,3 +57,4 @@ func (a Account) deleteSalt(cql *gocql.Session) error {
 	}
 	return nil
 }
+*/

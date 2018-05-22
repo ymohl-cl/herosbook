@@ -1,6 +1,10 @@
 package postgres
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"github.com/ymohl-cl/herosbook/pkg/model"
+)
 
 // Postgres define the payload JSON matcher to instanciate a postgres service
 type Postgres interface {
@@ -19,7 +23,8 @@ type json struct {
 
 // Driver implement interface to *sql.DB
 type Driver interface {
-	Close()
+	Close() error
+	NewUser(user model.User, password []byte) (err error)
 }
 
 // New return a json struct to match the payload

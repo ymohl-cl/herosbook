@@ -1,4 +1,11 @@
-package users
+package model
+
+import (
+	"errors"
+
+	"github.com/asaskevich/govalidator"
+	"github.com/ymohl-cl/herosbook/models/users"
+)
 
 // Parameters users
 const (
@@ -38,4 +45,20 @@ type Informations struct {
 // ClearPasswords reset the Passwords structure
 func (u *User) ClearPasswords() {
 	u.Pass = Passwords{}
+}
+
+func (u User) Validate() (err error) {
+	if ok, err := govalidator.ValidateStruct(u); !ok {
+		return err
+	}
+	if ok := govalidator.IsByteLength(u.Infos.Pseudo, users.PseudoSizeMin, users.PseudoSizeMax); !ok {
+		return errors.New("Inappropriate pseudo size")
+	}
+	if ok := govalidator.InRange(int(u.Infos.Age), int(users.AgeMin), int(users.AgeMax)); !ok {
+		return errors.New("age field must be in a range of 10 to 142")
+	}
+	if ok := govalidator.StringMatches(u.Pass.One, a.user.Pass.Two); !ok {
+		return errors.New("passwords differs")
+	}
+	return nil
 }
