@@ -25,7 +25,7 @@ func main() {
 	}
 
 	// sql.DB instance
-	if clientSQL, err = c.SQL.Client(); err != nil {
+	if clientSQL, err = c.SQL.New(); err != nil {
 		panic(err)
 	}
 	defer clientSQL.Close()

@@ -17,7 +17,7 @@ type ssl struct {
 
 type config struct {
 	SSL ssl                 `json:"api" valid:"required"`
-	SQL postgres.Postgres   `json:"psql" valid:"required"`
+	SQL postgres.Conf       `json:"psql" valid:"required"`
 	CQL cassandra.Cassandra `json:"cassandra" valid:"required"`
 }
 

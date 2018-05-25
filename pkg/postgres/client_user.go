@@ -1,16 +1,10 @@
 package postgres
 
-import (
-	"database/sql"
+import "github.com/ymohl-cl/herosbook/pkg/model"
 
-	"github.com/ymohl-cl/herosbook/pkg/model"
-)
-
-func (d Driver) CreateUser(user model.User, password []byte) (err error) {
-	var psql *sql.DB
-
-	psql = d.(*sql.DB)
-	if err = psql.QueryRow(`INSERT INTO users(
+// CreateUser on the sql DB
+func (c client) CreateUser(user model.User, password []byte) (err error) {
+	if err = c.driver.QueryRow(`INSERT INTO users(
 		pseudo,
 		password,
 		age,
@@ -27,11 +21,9 @@ func (d Driver) CreateUser(user model.User, password []byte) (err error) {
 	return nil
 }
 
-func (d Driver) UpdateUser(user model.User) (err error) {
-	var psql *sql.DB
-
-	psql = d.(*sql.DB)
-	if _, err = psql.Exec(`UPDATE users SET
+// UpdareUser on the sql DB
+func (c client) UpdateUser(user model.User) (err error) {
+	if _, err = c.driver.Exec(`UPDATE users SET
 		pseudo = $1,
 		age = $2,
 		sex = $3,
@@ -47,8 +39,9 @@ func (d Driver) UpdateUser(user model.User) (err error) {
 	return nil
 }
 
-func (d Driver) UpdatePassword(user model.User, password []byte) (err error) {
-	if _, err = psql.Exec(`UPDATE users SET
+// UpdatePassword on the sql DB
+func (c client) UpdatePassword(user model.User, password []byte) (err error) {
+	if _, err = c.driver.Exec(`UPDATE users SET
  		password = $1 WHERE id_public = $2`,
 		password,
 		user.ID.Value); err != nil {

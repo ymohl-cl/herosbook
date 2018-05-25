@@ -15,7 +15,7 @@ const (
 
 // Account manage create edit and delete user
 type Account struct {
-	user users.User
+	user User
 	Rec  func(*sql.DB, *gocql.Session) (int, error)
 	Resp func() ([]byte, int, error)
 }

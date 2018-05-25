@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+    herosbook:
+        image: debian
+        volumes:
+            - "./Bin/:/bin"
+        command: /bin/herosbook
+        links:
+            - cassandra:cassandra
+            - postgres:postgres
+        ports:
+            - 1323:1323
+    cassandra:
+        image: cassandra:latest
+        restart: always
+        ports:
+            - 9042:9042
+        volumes:
+            - "./Data/cassandra/:/opt/data/"
+        entrypoint:
+            - /opt/data/entrypoint-cassandra.sh
+    postgres:
+        image: postgres:latest
+        restart: always
+        environment:
+            - POSTGRES_DB=herosbook_database
+            - POSTGRES_USER=user_example
+            - POSTGRES_PASSWORD=pass_example
+        build:
+            context: Data/dockerfiles
+            dockerfile: postgres
+        volumes:
+            - "./Data/psql/:/docker-entrypoint-initdb.d/"
+        ports:
+            - 5432:5432
