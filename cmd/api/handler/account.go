@@ -7,83 +7,113 @@ import (
 	"github.com/ymohl-cl/herosbook/pkg/model"
 )
 
-// Connect : _
-func (h handle) Connect(c echo.Context) error {
-	c.Set("un", nil)
-	return c.String(http.StatusOK, "Connect : _")
-}
-
-// Disconnect : _
-func (h handle) Disconnect(c echo.Context) error {
-	return c.String(http.StatusOK, "Disconnect : _")
-}
-
-// CreateUser : _
-func (h handle) CreateUser(c echo.Context) error {
-	var err error
-	var user model.User
-	var object interface{}
+// ConnectAccount provide a fresh token if authentication is available
+func (h handle) ConnectAccount(c echo.Context) (err error) {
+	var account model.Account
 	var response []byte
 
-	if user, err = h.jsonParser(c, user); err != nil {
+	if err = h.jsonParser(c, &account); err != nil {
 		return c.JSON(h.getHTTPStatus(err), err.Error())
 	}
 
-	if object, err = h.m.CreateUser(user); err != nil {
+	if err = h.m.ConnectAccount(&account); err != nil {
 		return c.JSON(h.getHTTPStatus(err), err.Error())
 	}
 
-	if response, err = h.jsonBuilder(object); err != nil {
+	account.Passwords.Reset()
+	if response, err = h.jsonBuilder(account); err != nil {
 		return c.JSON(h.getHTTPStatus(err), err.Error())
 	}
 
 	return c.JSONBlob(http.StatusOK, response)
-	// get the controller
-	//	if content, err = account.New(account.Create); err != nil {
-	//return c.JSON(http.StatusInternalServerError, err.Error())
-	//}
-
-	// send the response
 }
 
-// EditUser : _
-func (h handle) EditUser(c echo.Context) error {
-	var content controller.Content
-	var err error
-	var status int
-	var r []byte
+/*
+// Disconnect : _
+func (h handle) Disconnect(c echo.Context) error {
+	return c.String(http.StatusOK, "Disconnect : _")
+}
+*/
 
-	// get the controller
-	if content, err = account.New(account.Update); err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+// CreateAccount handler
+func (h handle) CreateAccount(c echo.Context) (err error) {
+	var account model.Account
+	var response []byte
+
+	if err = h.jsonParser(c, &account); err != nil {
+		return c.JSON(h.getHTTPStatus(err), err.Error())
 	}
 
-	// call the walkthrought to the setting method
-	if status, r, err = h.setters(c, content); err != nil {
-		return c.JSON(status, err.Error())
+	if err = h.m.CreateAccount(&account); err != nil {
+		return c.JSON(h.getHTTPStatus(err), err.Error())
 	}
 
-	// send the response
-	return c.JSONBlob(http.StatusOK, r)
+	account.Passwords.Reset()
+	if response, err = h.jsonBuilder(account); err != nil {
+		return c.JSON(h.getHTTPStatus(err), err.Error())
+	}
+
+	return c.JSONBlob(http.StatusOK, response)
 }
 
-// DeleteUser : _
-func (h handle) DeleteUser(c echo.Context) error {
-	var content controller.Content
-	var err error
-	var status int
-	var r []byte
+// UpdateUser handler
+func (h handle) UpdateUser(c echo.Context) (err error) {
+	var account model.Account
+	var response []byte
 
-	// get the controller
-	if content, err = account.New(account.Delete); err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+	if err = h.jsonParser(c, &account); err != nil {
+		return c.JSON(h.getHTTPStatus(err), err.Error())
 	}
 
-	// call the walkthrought to the setting method
-	if status, r, err = h.setters(c, content); err != nil {
-		return c.JSON(status, err.Error())
+	if err = h.m.UpdateUser(&account.User); err != nil {
+		return c.JSON(h.getHTTPStatus(err), err.Error())
 	}
 
-	// send the response
-	return c.JSONBlob(http.StatusOK, r)
+	account.Passwords.Reset()
+	if response, err = h.jsonBuilder(account.User); err != nil {
+		return c.JSON(h.getHTTPStatus(err), err.Error())
+	}
+
+	return c.JSONBlob(http.StatusOK, response)
+}
+
+// DeleteAccount handler
+func (h handle) DeleteAccount(c echo.Context) (err error) {
+	var account model.Account
+	var response []byte
+
+	if err = h.jsonParser(c, &account); err != nil {
+		return c.JSON(h.getHTTPStatus(err), err.Error())
+	}
+
+	if err = h.m.DeleteAccount(&account); err != nil {
+		return c.JSON(h.getHTTPStatus(err), err.Error())
+	}
+
+	if response, err = h.jsonBuilder(account); err != nil {
+		return c.JSON(h.getHTTPStatus(err), err.Error())
+	}
+
+	return c.JSONBlob(http.StatusOK, response)
+}
+
+// UpdatePassword handler
+func (h handle) UpdatePassword(c echo.Context) (err error) {
+	var account model.Account
+	var response []byte
+
+	if err = h.jsonParser(c, &account); err != nil {
+		return c.JSON(h.getHTTPStatus(err), err.Error())
+	}
+
+	if err = h.m.UpdatePassword(&account); err != nil {
+		return c.JSON(h.getHTTPStatus(err), err.Error())
+	}
+
+	if response, err = h.jsonBuilder(account); err != nil {
+		return c.JSON(h.getHTTPStatus(err), err.Error())
+	}
+
+	account.Passwords.Reset()
+	return c.JSONBlob(http.StatusOK, response)
 }

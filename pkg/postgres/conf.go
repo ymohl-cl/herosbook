@@ -3,7 +3,7 @@ package postgres
 import "database/sql"
 
 // Conf postgres provide a set parameters to instanciate a new client
-// Conf define the tad to your configuration file
+// Conf define the tags to your configuration file
 type Conf struct {
 	DriverName string `json:"driver" valid:"required"`
 	User       string `json:"user" valid:"required"`

@@ -13,8 +13,8 @@ import (
 func main() {
 	var err error
 	var c *config
-	var clientSQL postgres.Driver
-	var clientCQL cassandra.Driver
+	var clientSQL postgres.ClientI
+	var clientCQL cassandra.ClientI
 
 	// Set validation structure
 	govalidator.SetFieldsRequiredByDefault(true)
@@ -31,7 +31,7 @@ func main() {
 	defer clientSQL.Close()
 
 	// gocql.DB instance
-	if clientCQL, err = c.CQL.Client(); err != nil {
+	if clientCQL, err = c.CQL.New(); err != nil {
 		panic(err)
 	}
 	defer clientCQL.Close()

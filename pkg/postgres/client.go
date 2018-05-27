@@ -10,8 +10,9 @@ import (
 // Has a driver sql on his instance
 type ClientI interface {
 	Close() (err error)
-	CreateUser(user model.User, password []byte) (err error)
-	UpdateUser(user model.User) (err error)
+	CreateAccount(a *model.Account, password []byte) (err error)
+	DeleteAccount(a *model.Account) (err error)
+	UpdateUser(user *model.User) (err error)
 	UpdatePassword(user model.User, password []byte) (err error)
 }
 

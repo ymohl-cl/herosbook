@@ -16,16 +16,13 @@ type ssl struct {
 }
 
 type config struct {
-	SSL ssl                 `json:"api" valid:"required"`
-	SQL postgres.Conf       `json:"psql" valid:"required"`
-	CQL cassandra.Cassandra `json:"cassandra" valid:"required"`
+	SSL ssl            `json:"api" valid:"required"`
+	SQL postgres.Conf  `json:"psql" valid:"required"`
+	CQL cassandra.Conf `json:"cassandra" valid:"required"`
 }
 
 func configure() (*config, error) {
 	var c config
-
-	c.SQL = postgres.New()
-	c.CQL = cassandra.New()
 
 	// open config file
 	file, err := os.Open("/bin/config_example.json")

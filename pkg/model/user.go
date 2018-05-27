@@ -14,50 +14,27 @@ const (
 	AgeMax        = 142
 )
 
-// User : _
+// User data
+// Private fields are escaped by json "-"
 type User struct {
-	ID    PublicID     `json:"public_id" valid:"-"`
-	Pass  Passwords    `json:"passwords" valid:"required"`
-	Infos Informations `json:"informations" valid:"required"`
+	PublicID  string `json:"public_id" valid:"-"`
+	PrivateID string `json:"-"`
+	Pseudo    string `json:"pseudo" valid:"alphanum"`
+	Age       uint8  `json:"age" valid:"required"`
+	Sex       string `json:"sex" valid:"alpha, in(male|female)"`
+	Email     string `json:"email" valid:"email"`
 }
 
-// PublicID : _
-type PublicID struct {
-	Value string `json:"id" valid:"required"`
-}
-
-// Passwords : _
-type Passwords struct {
-	One string `json:"password_1" valid:"printableascii"`
-	Two string `json:"password_2" valid:"printableascii"`
-	Old string `json:"oldPassword" valid:"-"`
-}
-
-// Informations : _
-type Informations struct {
-	Pseudo string `json:"pseudo" valid:"alphanum"`
-	Age    uint8  `json:"age" valid:"required"`
-	Sex    string `json:"sex" valid:"alpha, in(male|female)"`
-	Email  string `json:"email" valid:"email"`
-}
-
-// ClearPasswords reset the Passwords structure
-func (u *User) ClearPasswords() {
-	u.Pass = Passwords{}
-}
-
+// Validate provide a great checker format without work with datas provided by the client
 func (u User) Validate() (err error) {
 	if ok, err := govalidator.ValidateStruct(u); !ok {
 		return err
 	}
-	if ok := govalidator.IsByteLength(u.Infos.Pseudo, PseudoSizeMin, PseudoSizeMax); !ok {
+	if ok := govalidator.IsByteLength(u.Pseudo, PseudoSizeMin, PseudoSizeMax); !ok {
 		return errors.New("Inappropriate pseudo size")
 	}
-	if ok := govalidator.InRange(int(u.Infos.Age), int(AgeMin), int(AgeMax)); !ok {
+	if ok := govalidator.InRange(int(u.Age), int(AgeMin), int(AgeMax)); !ok {
 		return errors.New("age field must be in a range of 10 to 142")
-	}
-	if ok := govalidator.StringMatches(u.Pass.One, u.Pass.Two); !ok {
-		return errors.New("passwords differs")
 	}
 	return nil
 }
