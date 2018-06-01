@@ -6,48 +6,43 @@ import (
 	"io"
 
 	"github.com/ymohl-cl/gen-pwd/generator"
+	"github.com/ymohl-cl/herosbook/cmd/api/constant"
 	"github.com/ymohl-cl/herosbook/pkg/model"
 )
 
-// TODO : TERMINATED CONNECTACCOUNT (see comment on middleware)
-func (m manage) ConnectAccount(a *model.Account) (token string, err error) {
-	var requester *model.Account
+// ConnectAccount get the current account and extract password and salt user.
+// If password matches, create a new token and return it
+func (m manage) ConnectAccount(a *model.Account) (err error) {
+	var cmp *model.Account
 	var salt []byte
 
-	// get user's information
-	if requester, err = m.clientSQL.Account(a.User.Pseudo); err != nil {
-		return token, err
+	if cmp, err = m.clientSQL.Account(a.User.Pseudo); err != nil {
+		return err
 	}
-
-	// get salt password
-	if salt, err = m.clientCQL.Salt(requester.User.PublicID); err != nil {
-		return token, err
+	if salt, err = m.clientCQL.Salt(cmp.User.PublicID); err != nil {
+		return err
 	}
-
-	// get  encrypted password
 	genPWD := generator.NewByDefault()
 	var pass []byte
-	if pass, err = genPWD.GetEncryptedPassword(a.Passwords.One, salt); err != nil {
-		return token, err
+	if pass, err = genPWD.GetEncryptedPassword(string(a.Passwords.One), salt); err != nil {
+		return err
 	}
 
-	if bytes.Compare(pass, requester.Passwords.One) != 0 {
-		return token, err
+	if bytes.Compare(pass, []byte(cmp.Passwords.One)) != 0 {
+		return err
+	}
+	token := make([]byte, 32)
+	if _, err = io.ReadFull(rand.Reader, token); err != nil {
+		return err
+	}
+	if err = m.clientCQL.SaveToken(cmp.User.PublicID, token, constant.Public.LifeAPIToken); err != nil {
+		return err
 	}
 
-	// generate token
-	t := make([]byte, 32)
-	if _, err = io.ReadFull(rand.Reader, t); err != nil {
-		return token, err
-	}
-
-	// save it on cql cassandra bdd
-	if err = m.clientCQL.SaveToken(requester.User.PublicID, t); err != nil {
-		return token, err
-	}
-
-	token = string.(t)
-	return token, nil
+	// attach on the pointer a the account getted on cmp
+	cmp.Token = string(token)
+	a = cmp
+	return nil
 }
 
 func (m manage) Disconnect() (err error) {

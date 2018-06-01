@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/ymohl-cl/herosbook/cmd/api/constant"
 	"github.com/ymohl-cl/herosbook/pkg/cassandra"
 	"github.com/ymohl-cl/herosbook/pkg/postgres"
 )
@@ -16,9 +17,10 @@ type ssl struct {
 }
 
 type config struct {
-	SSL ssl            `json:"api" valid:"required"`
-	SQL postgres.Conf  `json:"psql" valid:"required"`
-	CQL cassandra.Conf `json:"cassandra" valid:"required"`
+	SSL       ssl               `json:"api" valid:"required"`
+	SQL       postgres.Conf     `json:"psql" valid:"required"`
+	CQL       cassandra.Conf    `json:"cassandra" valid:"required"`
+	Constants constant.Constant `json:"constant_params" valid:"required"`
 }
 
 func configure() (*config, error) {

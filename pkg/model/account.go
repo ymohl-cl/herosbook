@@ -2,9 +2,9 @@ package model
 
 // Account manage create edit and delete user
 type Account struct {
-	User      User
-	Passwords Password
-	Token     string
+	User      User     `json:"user"`
+	Passwords Password `json:"-"`
+	Token     string   `json:"token"`
 }
 
 // Validate

@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/asaskevich/govalidator"
 	"github.com/labstack/echo"
-	_ "github.com/lib/pq"
+
+	"github.com/ymohl-cl/herosbook/cmd/api/constant"
 	"github.com/ymohl-cl/herosbook/cmd/api/handler"
 	"github.com/ymohl-cl/herosbook/cmd/api/manager"
 	"github.com/ymohl-cl/herosbook/pkg/cassandra"
@@ -11,6 +14,7 @@ import (
 )
 
 func main() {
+	fmt.Println("hello?")
 	var err error
 	var c *config
 	var clientSQL postgres.ClientI
@@ -21,6 +25,11 @@ func main() {
 
 	// get configuration
 	if c, err = configure(); err != nil {
+		panic(err)
+	}
+
+	// set constants
+	if err = constant.Init(c.Constants); err != nil {
 		panic(err)
 	}
 

@@ -10,11 +10,14 @@
 		"password": "pass_example",
 		"db": "herosbook_database",
 		"sslmode": "disable",
-		"host": "postgres",
+		"host": "herosbook_postgres_1",
 		"port": "5432"
 	},
 	"cassandra": {
-		"clusters": ["cassandra:9042"],
+		"clusters": ["herosbook_cassandra_1:9042"],
 		"keyspace": "herosbook"
+	},
+	"constant_params": {
+		"lifeApiToken": 7200
 	}
 }

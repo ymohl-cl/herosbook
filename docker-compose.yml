@@ -1,6 +1,37 @@
 version: '3'
 
 services:
-    postgres:
-        image: postgres:latest
-
+    herosbook:
+        build:
+            context: .
+            dockerfile: Ressources/DockerfileAPI
+        volumes:
+            - "./Bin/:/etc/"
+        ports:
+            - 1323:1323
+#        depends_on:
+#            - cassandra
+#            - postgres
+#    cassandra:
+#        image: cassandra:latest
+#        restart: always
+#        ports:
+#            - 9042:9042
+#        volumes:
+#            - "./Data/cassandra/:/opt/data/"
+#        entrypoint:
+#            - /opt/data/entrypoint-cassandra.sh
+#    postgres:
+#        image: postgres:latest
+#        restart: always
+#        environment:
+#            - POSTGRES_DB=herosbook_database
+#            - POSTGRES_USER=user_example
+#            - POSTGRES_PASSWORD=pass_example
+#        build:
+#            context: Data/dockerfiles
+#            dockerfile: postgres
+#        volumes:
+#            - "./Data/psql/:/docker-entrypoint-initdb.d/"
+#        ports:
+#            - 5432:5432

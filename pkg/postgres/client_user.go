@@ -1,6 +1,35 @@
 package postgres
 
-import "github.com/ymohl-cl/herosbook/pkg/model"
+import (
+	"database/sql"
+	"errors"
+
+	"github.com/ymohl-cl/herosbook/pkg/model"
+)
+
+// Account return instance
+func (c client) Account(pseudo string) (a *model.Account, err error) {
+	var rows *sql.Rows
+	if rows, err = c.driver.Query(`SELECT FROM users WHERE pseudo = $1`,
+		pseudo); err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	for i := 1; rows.Next(); i++ {
+		if i != 1 {
+			return nil, errors.New("there are bad results number to get a account from one pseudo")
+		}
+		if err = rows.Scan(a); err != nil {
+			return nil, err
+		}
+	}
+	return a, err
+}
 
 // CreateAccount on the sql DB
 func (c client) CreateAccount(a *model.Account, password []byte) (err error) {
