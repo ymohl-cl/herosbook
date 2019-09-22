@@ -96,6 +96,10 @@ func (c controller) ReadBooks(filters model.SearchBook, userID string) ([]model.
 		str := filters.Author + ` = ANY (authors)`
 		strs = append(strs, str)
 	}
+	if filters.Author != "" {
+		str := filters.Author + ` = ANY (authors)`
+		strs = append(strs, str)
+	}
 	if !filters.From.IsZero() {
 		str := `creation date >= ` + filters.From.String()
 		strs = append(strs, str)

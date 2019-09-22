@@ -67,7 +67,7 @@ func (a Auth) Create(user User, password string) (User, error) {
 	if row, err = a.userDB.WithRow(querySQL); err != nil {
 		return User{}, err
 	}
-	if err = row.Scan(user.Identifier); err != nil {
+	if err = row.Scan(&user.Identifier); err != nil {
 		return User{}, err
 	}
 

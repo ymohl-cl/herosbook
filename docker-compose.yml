@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-    heroesbook:
+    h-api-editor:
         build:
             context: .
             dockerfile: cmd/api-editor/Dockerfile
@@ -34,6 +34,13 @@ services:
             - HEROESBOOK_EDITOR_APP_POSTGRES_HOST=postgres
             - HEROESBOOK_EDITOR_APP_POSTGRES_PORT=5432
 
+    h-view-editor:
+        build:
+            context: view/editor
+            dockerfile: Dockerfile
+        ports:
+            - 8080:8080
+
     postgres:
         image: postgres:12.0
         restart: always
@@ -47,11 +54,9 @@ services:
             - 5432:5432
     
     cassandra:
-        image: cassandra:2.1.21
+        build:
+            context: resources/cassandra
+            dockerfile: Dockerfile
         restart: always
         ports:
             - 9042:9042
-        volumes:
-            - "./resources/cassandra/:/opt/data/"
-        entrypoint:
-            - /opt/data/entrypoint.sh
