@@ -1,37 +1,57 @@
 version: '3'
 
 services:
-    herosbook:
+    heroesbook:
         build:
             context: .
-            dockerfile: Ressources/DockerfileAPI
-        volumes:
-            - "./Bin/:/etc/"
+            dockerfile: cmd/api-editor/Dockerfile
         ports:
-            - 1323:1323
-#        depends_on:
-#            - cassandra
-#            - postgres
-#    cassandra:
-#        image: cassandra:latest
-#        restart: always
-#        ports:
-#            - 9042:9042
-#        volumes:
-#            - "./Data/cassandra/:/opt/data/"
-#        entrypoint:
-#            - /opt/data/entrypoint-cassandra.sh
-#    postgres:
-#        image: postgres:latest
-#        restart: always
-#        environment:
-#            - POSTGRES_DB=herosbook_database
-#            - POSTGRES_USER=user_example
-#            - POSTGRES_PASSWORD=pass_example
-#        build:
-#            context: Data/dockerfiles
-#            dockerfile: postgres
-#        volumes:
-#            - "./Data/psql/:/docker-entrypoint-initdb.d/"
-#        ports:
-#            - 5432:5432
+            - 4242:4242
+        restart: always
+        links:
+            - postgres:postgres
+            - cassandra:cassandra
+        environment:
+            - HEROESBOOK_EDITOR_SSL_ENABLE=false
+            - HEROESBOOK_EDITOR_SSL_CERT=resources/cert.pem
+            - HEROESBOOK_EDITOR_SSL_KEY=resources/key.pem
+            - HEROESBOOK_EDITOR_PORT=4242
+            - HEROESBOOK_EDITOR_AUTH_ENABLE=true
+            - HEROESBOOK_EDITOR_AUTH_JWT_KEY=--key-jwt--
+            - HEROESBOOK_EDITOR_AUTH_POSTGRES_USER=postgres
+            - HEROESBOOK_EDITOR_AUTH_POSTGRES_PASSWORD=pass_example
+            - HEROESBOOK_EDITOR_AUTH_POSTGRES_DB_NAME=heroes
+            - HEROESBOOK_EDITOR_AUTH_POSTGRES_SSL=disable
+            - HEROESBOOK_EDITOR_AUTH_POSTGRES_HOST=postgres
+            - HEROESBOOK_EDITOR_AUTH_POSTGRES_PORT=5432
+            - HEROESBOOK_EDITOR_AUTH_CASSANDRA_HOSTS=cassandra
+            - HEROESBOOK_EDITOR_AUTH_CASSANDRA_KEYSPACE=heroesbook
+            - HEROESBOOK_EDITOR_AUTH_CASSANDRA_PORT=9042
+            - HEROESBOOK_EDITOR_APP_POSTGRES_USER=postgres
+            - HEROESBOOK_EDITOR_APP_POSTGRES_PASSWORD=pass_example
+            - HEROESBOOK_EDITOR_APP_POSTGRES_DB_NAME=heroes
+            - HEROESBOOK_EDITOR_APP_POSTGRES_SSL=disable
+            - HEROESBOOK_EDITOR_APP_POSTGRES_HOST=postgres
+            - HEROESBOOK_EDITOR_APP_POSTGRES_PORT=5432
+
+    postgres:
+        image: postgres:12.0
+        restart: always
+        environment:
+            - POSTGRES_DB=heroes
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=pass_example
+        volumes:
+            - "./resources/psql/:/docker-entrypoint-initdb.d/"
+        ports:
+            - 5432:5432
+    
+    cassandra:
+        image: cassandra:2.1.21
+        restart: always
+        ports:
+            - 9042:9042
+        volumes:
+            - "./resources/cassandra/:/opt/data/"
+        entrypoint:
+            - /opt/data/entrypoint.sh
