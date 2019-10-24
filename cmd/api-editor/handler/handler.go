@@ -32,6 +32,12 @@ func New(appName string, server *echo.Group) error {
 	server.POST("/books/:id/category", h.CreateCategory)
 	server.PUT("/books/:id/category", h.UpdateCategory)
 	server.DELETE("/books/:id/category/:id_category", h.RemoveCategory)
+	// node
+	server.POST("/books/:id/node", h.CreateNode)
+	server.GET("/books/:id/node", h.GetNodes)
+	server.GET("/books/:id/node/:id_node", h.GetNode)
+	server.PUT("/books/:id/node", h.UpdateNode)
+	server.DELETE("/books/:id/node/:id_node", h.RemoveNode)
 
 	return nil
 }

@@ -22,7 +22,6 @@ func (h Handler) CreateBook(c echo.Context) error {
 			"error": "invalid input",
 		})
 	}
-	b.Authors = append(b.Authors, user.Identifier)
 	b.Owner = user.Identifier
 	b.Publish = false
 	if err = h.controller.RecordBook(&b); err != nil {
@@ -52,7 +51,7 @@ func (h Handler) GetBook(c echo.Context) error {
 		})
 	}
 	if b.Identifier == "" {
-		return c.JSON(http.StatusNotFound, map[string]string{
+		return c.JSON(http.StatusNoContent, map[string]string{
 			"message": "book not found",
 		})
 	}
@@ -79,15 +78,13 @@ func (h Handler) SearchBooks(c echo.Context) error {
 			"error": "internal error",
 		})
 	}
+	if len(books) == 0 {
+		return c.NoContent(http.StatusNoContent)
+	}
 	return c.JSON(http.StatusOK, &books)
 }
 
-func (h Handler) RemoveBook(c echo.Context) error {
-	return c.JSON(http.StatusOK, map[string]string{
-		"message": "in-progress",
-	})
-}
-
+// UpdateBook targeted by the bookID
 func (h Handler) UpdateBook(c echo.Context) error {
 	var err error
 	var user auth.User
@@ -100,12 +97,6 @@ func (h Handler) UpdateBook(c echo.Context) error {
 			"error": "invalid input",
 		})
 	}
-	if !b.IsEditable(user.Identifier) {
-		fmt.Printf("UpdateBook - b.IsEditable - not editable !\n")
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error": "book is not editable",
-		})
-	}
 	if b, err = h.controller.UpdateBook(b, user.Identifier); err != nil {
 		fmt.Printf("UpdateBook - h.controller.UpdateBook - %s\n", err.Error())
 		return c.JSON(http.StatusBadRequest, map[string]string{
@@ -114,4 +105,22 @@ func (h Handler) UpdateBook(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, &b)
+}
+
+// RemoveBook by id
+func (h Handler) RemoveBook(c echo.Context) error {
+	var err error
+	var user auth.User
+
+	bookID := c.Param("id")
+	user = auth.ParseToken(c)
+	if err = h.controller.DeleteBook(bookID, user.Identifier); err != nil {
+		fmt.Printf("RemoveBook - h.controller.DeleteBook - %s\n", err.Error())
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "internal error",
+		})
+	}
+	return c.JSON(http.StatusOK, map[string]string{
+		"identifier": bookID,
+	})
 }

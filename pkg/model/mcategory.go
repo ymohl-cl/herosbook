@@ -13,10 +13,11 @@ const (
 
 // Category describe the section to attach node and help to the organization
 type Category struct {
-	Identifier  string `json:"id" validate:"omitempty,uuid4"`
+	Identifier  string `json:"identifier" validate:"omitempty,uuid4"`
 	Type        string `json:"type" validate:"required"`
 	Title       string `json:"title" validate:"max=255,required"`
 	Description string `json:"description"`
+	BookID      string `json:"bookId" validate:"omitempty,uuid4"`
 }
 
 // Validate implentation of jsonvalidator.Model
