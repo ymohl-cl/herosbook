@@ -11,7 +11,7 @@ import (
 // JSONValidator is an implementation of validation data stucture
 // will be attached on http driver
 type JSONValidator interface {
-	Bind(r *http.Request, input interface{}) error
+	Bind(r *http.Request, input Model) error
 }
 
 type jsonValidator struct {
@@ -26,7 +26,7 @@ func New() JSONValidator {
 }
 
 // Bind parse the input json parameter et validate it
-func (j jsonValidator) Bind(r *http.Request, input interface{}) error {
+func (j jsonValidator) Bind(r *http.Request, input Model) error {
 	var err error
 
 	if r.Body == nil {
@@ -36,6 +36,9 @@ func (j jsonValidator) Bind(r *http.Request, input interface{}) error {
 		return err
 	}
 	if err = j.driver.Struct(input); err != nil {
+		return err
+	}
+	if err = input.Validate(); err != nil {
 		return err
 	}
 	return nil

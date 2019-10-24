@@ -14,7 +14,7 @@ import (
 type Client interface {
 	WithRows(q Query) (ScanRows, error)
 	WithRow(q Query) (ScanRow, error)
-	WithNoRow(q Query) error
+	WithNoRow(q Query) (int64, error)
 	NewTransaction() (Transaction, error)
 	Close() error
 }
@@ -90,11 +90,19 @@ func (c client) WithRows(q Query) (ScanRows, error) {
 }
 
 // Execute query without get the result
-func (c client) WithNoRow(q Query) error {
-	if _, err := c.driver.Exec(q.Content(), q.ARGS()...); err != nil {
-		return err
+// Return the number rows affected or error if occured
+func (c client) WithNoRow(q Query) (int64, error) {
+	var err error
+	var result sql.Result
+	var nbAffectedRows int64
+
+	if result, err = c.driver.Exec(q.Content(), q.ARGS()...); err != nil {
+		return 0, err
 	}
-	return nil
+	if nbAffectedRows, err = result.RowsAffected(); err != nil {
+		return 0, err
+	}
+	return nbAffectedRows, nil
 }
 
 // NewTransaction return a transaction driver to exec transac sql requests

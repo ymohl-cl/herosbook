@@ -10,3 +10,7 @@ type User struct {
 	Genre      string `json:"genre"`
 	Email      string `json:"email" validate:"required,email"`
 }
+
+func (u User) Validate() error {
+	return nil
+}

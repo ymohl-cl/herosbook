@@ -16,6 +16,10 @@ type Book struct {
 	Board        string    `json:"boardId"`
 }
 
+func (b Book) Validate() error {
+	return nil
+}
+
 // IsEditable check if the book can be edit
 // Check if the book is not published
 // Check if the user is owner or author to update it
@@ -41,12 +45,7 @@ type SearchBook struct {
 	To     time.Time `json:"toDate"`
 }
 
-// Node api model
-type Node struct {
-	Identifier        string   `json:"identifier"`
-	Authors           []string `json:"authors"`
-	Owner             string   `json:"owner"`
-	ChildNodes        []string `json:"childNodes"`
-	ConditionnalNodes []string `json:"conditionnalNodes"`
-	Content           string   `json:"content"`
+// Validate implentation of jsonvalidator.Model
+func (sb SearchBook) Validate() error {
+	return nil
 }

@@ -53,18 +53,26 @@ CREATE TABLE h_removed_book
 	board_id UUID				REFERENCES h_board,
 	PRIMARY KEY (id)
 );
-CREATE TABLE h_author
-(
-	book_id UUID				REFERENCES h_book NOT NULL,
-	user_id UUID				REFERENCES h_user NOT NULL
-);
 CREATE TABLE h_relation_node
 (
 	parent_node UUID			REFERENCES h_node NOT NULL,
-	source_node UUID				REFERENCES h_node NOT NULL
+	source_node UUID			REFERENCES h_node NOT NULL
 );
 CREATE TABLE h_conditionnal_node
 (
 	destination_node UUID		REFERENCES h_node NOT NULL,
 	check_node UUID				REFERENCES h_node NOT NULL
+);
+CREATE TABLE h_category
+(
+	id UUID						DEFAULT uuid_generate_v4(),
+	name_category VARCHAR(255)	NOT NULL,
+	title VARCHAR(255)			NOT NULL,
+	description TEXT,
+	PRIMARY KEY (id)
+);
+CREATE TABLE h_link_book_category
+(
+	id_category UUID			REFERENCES h_category ON DELETE CASCADE NOT NULL,
+	id_book	UUID				REFERENCES h_book ON DELETE CASCADE NOT NULL
 )
