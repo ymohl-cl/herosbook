@@ -21,5 +21,19 @@ export default new Router({
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ './app/views/login/login.vue'),
     },
+    {
+      path: '/register',
+      name: 'register',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "about" */ './app/views/register/register.vue'),
+    },
+    {
+      path: '/book/:id',
+      name: 'book',
+      component: () => import( './app/views/book/book.vue'),
+		},
+		{ path: '*', redirect: '/' }
   ],
 });

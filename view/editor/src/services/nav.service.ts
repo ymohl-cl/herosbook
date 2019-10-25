@@ -5,7 +5,6 @@ import router from '@/router';
  * Service to manage navigation between views and rewrite url
  */
 class CNavService {
-
   public changeView(route:string):void{
     router.push(route);
   }
@@ -14,10 +13,10 @@ class CNavService {
     router.replace(route);
   }
 
-  public isSameRoute(route:string):boolean{
+  public isSameRoute(route:string):boolean {
     return router.currentRoute.name == route;
   }
 }
 
 const NavService = new CNavService();
-export default NavService; 
+export default NavService;
