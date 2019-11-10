@@ -39,6 +39,8 @@ func NewWithConfig(appName string, c Config) (App, error) {
 		jwtKey: c.Auth.JwtKey,
 	}
 	a.driver.Use(middleware.Logger())
+	a.driver.Use(middleware.CORS())
+	
 	a.driver.GET("/ping", Ping)
 	if c.Auth.Enable {
 		if a.jwtKey == "" {
