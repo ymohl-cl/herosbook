@@ -1,13 +1,17 @@
 package controller
 
 import (
+	"fmt"
+
 	"github.com/ymohl-cl/herosbook/pkg/model"
 	"github.com/ymohl-cl/herosbook/pkg/postgres"
+	"github.com/ymohl-cl/herosbook/pkg/xerror"
 	"golang.org/x/xerrors"
 )
 
 // RecordCategory to the book id
-func (c controller) RecordCategory(cat model.Category, userID, bookID string) (model.Category, error) {
+// check is use only to veriff than user is book's owner. It's not a case, Scan return an error and catch the not found error
+func (c controller) RecordCategory(cat model.Category, userID, bookID string) (model.Category, xerror.Xerror) {
 	var err error
 	var querySQL postgres.Query
 	var tx postgres.Transaction
@@ -15,7 +19,7 @@ func (c controller) RecordCategory(cat model.Category, userID, bookID string) (m
 	var str string
 
 	if tx, err = c.driverSQL.NewTransaction(); err != nil {
-		return model.Category{}, err
+		return model.Category{}, newInternalErr(err)
 	}
 	defer tx.Rollback()
 
@@ -25,17 +29,14 @@ func (c controller) RecordCategory(cat model.Category, userID, bookID string) (m
 		bookID,
 		userID,
 	); err != nil {
-		return model.Category{}, err
+		return model.Category{}, newInternalErr(err)
 	}
 	if row, err = tx.WithRow(querySQL); err != nil {
-		return model.Category{}, err
+		return model.Category{}, newInternalErr(err)
 	}
 	check := ""
 	if err = row.Scan(&check); err != nil {
-		return model.Category{}, err
-	}
-	if check != bookID {
-		return model.Category{}, xerrors.New("user can't add a category")
+		return model.Category{}, catchErr(err)
 	}
 
 	// insert category
@@ -46,13 +47,13 @@ func (c controller) RecordCategory(cat model.Category, userID, bookID string) (m
 		cat.Description,
 		bookID,
 	); err != nil {
-		return model.Category{}, err
+		return model.Category{}, newInternalErr(err)
 	}
 	if row, err = tx.WithRow(querySQL); err != nil {
-		return model.Category{}, err
+		return model.Category{}, newInternalErr(err)
 	}
 	if err = row.Scan(&cat.Identifier); err != nil {
-		return model.Category{}, err
+		return model.Category{}, catchErr(err)
 	}
 
 	tx.Commit()
@@ -62,7 +63,7 @@ func (c controller) RecordCategory(cat model.Category, userID, bookID string) (m
 // UpdateCategory to the book id
 // check if user is book's owner
 // check if title category is not used to this book
-func (c controller) UpdateCategory(cat model.Category, userID, bookID string) error {
+func (c controller) UpdateCategory(cat model.Category, userID, bookID string) xerror.Xerror {
 	var err error
 	var querySQL postgres.Query
 	var str string
@@ -82,13 +83,13 @@ func (c controller) UpdateCategory(cat model.Category, userID, bookID string) er
 		userID,
 		cat.Identifier,
 	); err != nil {
-		return err
+		return newInternalErr(err)
 	}
 	if nbAffectedRow, err = c.driverSQL.WithNoRow(querySQL); err != nil {
-		return err
+		return newInternalErr(err)
 	}
 	if nbAffectedRow != 1 {
-		return xerrors.New("error to update the category")
+		return newNoContentErr(xerrors.New(fmt.Sprintf("number rows affected by the update category request: %d", nbAffectedRow)))
 	}
 	return nil
 }
@@ -96,7 +97,7 @@ func (c controller) UpdateCategory(cat model.Category, userID, bookID string) er
 // DeleteCategory from the database if:
 // user_id is book's owner
 // category exist to this book
-func (c controller) DeleteCategory(categoryID, userID, bookID string) error {
+func (c controller) DeleteCategory(categoryID, userID, bookID string) xerror.Xerror {
 	var err error
 	var querySQL postgres.Query
 	var str string
@@ -111,13 +112,13 @@ func (c controller) DeleteCategory(categoryID, userID, bookID string) error {
 		userID,
 		categoryID,
 	); err != nil {
-		return err
+		return newInternalErr(err)
 	}
 	if nbAffectedRow, err = c.driverSQL.WithNoRow(querySQL); err != nil {
-		return err
+		return newInternalErr(err)
 	}
 	if nbAffectedRow != 1 {
-		return xerrors.New("error to update the category")
+		return newNoContentErr(xerrors.New(fmt.Sprintf("number rows affected by the delete category request: %d", nbAffectedRow)))
 	}
 	return nil
 }

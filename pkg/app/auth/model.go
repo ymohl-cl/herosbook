@@ -11,6 +11,7 @@ type User struct {
 	Email      string `json:"email" validate:"required,email"`
 }
 
+// Validate implementation to use in jsonvalidator service
 func (u User) Validate() error {
 	return nil
 }

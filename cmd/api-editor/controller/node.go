@@ -1,15 +1,19 @@
 package controller
 
 import (
-	"strconv"
+	"fmt"
 
 	"github.com/ymohl-cl/herosbook/pkg/dto"
 	"github.com/ymohl-cl/herosbook/pkg/model"
 	"github.com/ymohl-cl/herosbook/pkg/postgres"
+	"github.com/ymohl-cl/herosbook/pkg/xerror"
 	"golang.org/x/xerrors"
 )
 
-func (c controller) RecordNode(node model.Node, userID, bookID string) (model.Node, error) {
+// RecordNode to the book id
+// check if user is book's owner
+// check if title category is not used to this book
+func (c controller) RecordNode(node model.Node, userID, bookID string) (model.Node, xerror.Xerror) {
 	var err error
 	var querySQL postgres.Query
 	var tx postgres.Transaction
@@ -17,7 +21,7 @@ func (c controller) RecordNode(node model.Node, userID, bookID string) (model.No
 	var str string
 
 	if tx, err = c.driverSQL.NewTransaction(); err != nil {
-		return model.Node{}, err
+		return model.Node{}, newInternalErr(err)
 	}
 	defer tx.Rollback()
 
@@ -27,17 +31,14 @@ func (c controller) RecordNode(node model.Node, userID, bookID string) (model.No
 		bookID,
 		userID,
 	); err != nil {
-		return model.Node{}, err
+		return model.Node{}, newInternalErr(err)
 	}
 	if row, err = tx.WithRow(querySQL); err != nil {
-		return model.Node{}, err
+		return model.Node{}, newInternalErr(err)
 	}
 	check := ""
 	if err = row.Scan(&check); err != nil {
-		return model.Node{}, err
-	}
-	if check != bookID {
-		return model.Node{}, xerrors.New("user can't add a category")
+		return model.Node{}, catchErr(err)
 	}
 
 	// create node
@@ -48,13 +49,13 @@ func (c controller) RecordNode(node model.Node, userID, bookID string) (model.No
 		bookID,
 		node.Content,
 	); err != nil {
-		return model.Node{}, err
+		return model.Node{}, newInternalErr(err)
 	}
 	if row, err = tx.WithRow(querySQL); err != nil {
-		return model.Node{}, err
+		return model.Node{}, newInternalErr(err)
 	}
 	if err = row.Scan(&node.Identifier); err != nil {
-		return model.Node{}, err
+		return model.Node{}, catchErr(err)
 	}
 
 	// link node and category and check than categories already exists
@@ -65,14 +66,14 @@ func (c controller) RecordNode(node model.Node, userID, bookID string) (model.No
 			categoryID,
 			bookID,
 		); err != nil {
-			return model.Node{}, err
+			return model.Node{}, newInternalErr(err)
 		}
 		nbAffectedRow := int64(0)
 		if nbAffectedRow, err = tx.WithNoRow(querySQL); err != nil {
-			return model.Node{}, err
+			return model.Node{}, newInternalErr(err)
 		}
 		if nbAffectedRow != 1 {
-			return model.Node{}, xerrors.New("linked node and category failed because rows affected: " + strconv.Itoa(int(nbAffectedRow)))
+			return model.Node{}, newNoContentErr(xerrors.New(fmt.Sprintf("number rows affected by linked node and category in create node request: %d", nbAffectedRow)))
 		}
 	}
 	tx.Commit()
@@ -80,15 +81,18 @@ func (c controller) RecordNode(node model.Node, userID, bookID string) (model.No
 }
 
 // UpdateNode and update the categories list attached
-func (c controller) UpdateNode(node model.Node, userID, bookID string) error {
+// check if user is book's owner
+// check if title category is not used to this book
+func (c controller) UpdateNode(node model.Node, userID, bookID string) xerror.Xerror {
 	var err error
+	var xerr xerror.Xerror
 	var querySQL postgres.Query
 	var tx postgres.Transaction
 	var row postgres.ScanRow
 	var str string
 
 	if tx, err = c.driverSQL.NewTransaction(); err != nil {
-		return err
+		return newInternalErr(err)
 	}
 	defer tx.Rollback()
 	// check which user is book's owner
@@ -97,18 +101,16 @@ func (c controller) UpdateNode(node model.Node, userID, bookID string) error {
 		bookID,
 		userID,
 	); err != nil {
-		return err
+		return newInternalErr(err)
 	}
 	if row, err = tx.WithRow(querySQL); err != nil {
-		return err
+		return newInternalErr(err)
 	}
 	check := ""
 	if err = row.Scan(&check); err != nil {
-		return err
+		return catchErr(err)
 	}
-	if check != bookID {
-		return xerrors.New("user can't add a category")
-	}
+
 	// update node
 	str = `UPDATE h_node SET title = $1,
 		description = $2,
@@ -120,29 +122,29 @@ func (c controller) UpdateNode(node model.Node, userID, bookID string) error {
 		bookID,
 		node.Identifier,
 	); err != nil {
-		return err
+		return newInternalErr(err)
 	}
 	nbAffectedRow := int64(0)
 	if nbAffectedRow, err = tx.WithNoRow(querySQL); err != nil {
-		return err
+		return newInternalErr(err)
 	}
 	if nbAffectedRow != 1 {
-		return xerrors.New("update node failed")
+		return newNoContentErr(xerrors.New(fmt.Sprintf("number rows affected by the update node request: %d", nbAffectedRow)))
 	}
-	if err = updateCategoriesNode(tx, node, bookID); err != nil {
-		return err
+	if xerr = updateCategoriesNode(tx, node, bookID); xerr != nil {
+		return xerr
 	}
-	if err = updateRelationNodes(tx, node.ChildIDS, node.Identifier, bookID, dto.TypeLink); err != nil {
-		return err
+	if xerr = updateRelationNodes(tx, node.ChildIDS, node.Identifier, bookID, dto.TypeLink); xerr != nil {
+		return xerr
 	}
-	if err = updateRelationNodes(tx, node.ContionnalIDS, node.Identifier, bookID, dto.TypeConditionnal); err != nil {
-		return err
+	if xerr = updateRelationNodes(tx, node.ContionnalIDS, node.Identifier, bookID, dto.TypeConditionnal); xerr != nil {
+		return xerr
 	}
 	tx.Commit()
 	return nil
 }
 
-func updateCategoriesNode(tx postgres.Transaction, node model.Node, bookID string) error {
+func updateCategoriesNode(tx postgres.Transaction, node model.Node, bookID string) xerror.Xerror {
 	var err error
 	var querySQL postgres.Query
 	var rows postgres.ScanRows
@@ -154,10 +156,10 @@ func updateCategoriesNode(tx postgres.Transaction, node model.Node, bookID strin
 	if querySQL, err = postgres.NewQuery(str,
 		node.Identifier,
 	); err != nil {
-		return err
+		return newInternalErr(err)
 	}
 	if rows, err = tx.WithRows(querySQL); err != nil {
-		return err
+		return newInternalErr(err)
 	}
 	defer rows.Close()
 	catIDS := []string{}
@@ -165,7 +167,7 @@ func updateCategoriesNode(tx postgres.Transaction, node model.Node, bookID strin
 	ok := true
 	for ok {
 		if ok, err = rows.Next(&str); err != nil {
-			return err
+			return newInternalErr(err)
 		}
 		if ok {
 			catIDS = append(catIDS, str)
@@ -197,14 +199,14 @@ func updateCategoriesNode(tx postgres.Transaction, node model.Node, bookID strin
 			bookID,
 			node.Identifier,
 		); err != nil {
-			return err
+			return newInternalErr(err)
 		}
 		nbAffectedRow := int64(0)
 		if nbAffectedRow, err = tx.WithNoRow(querySQL); err != nil {
-			return err
+			return newInternalErr(err)
 		}
 		if nbAffectedRow != 1 {
-			return xerrors.New("linked node and category failed")
+			return newNoContentErr(xerrors.New(fmt.Sprintf("number rows affected add link category node: %d", nbAffectedRow)))
 		}
 	}
 	// remove the rest of catIDS
@@ -214,20 +216,20 @@ func updateCategoriesNode(tx postgres.Transaction, node model.Node, bookID strin
 			node.Identifier,
 			catID,
 		); err != nil {
-			return err
+			return newInternalErr(err)
 		}
 		nbAffectedRow := int64(0)
 		if nbAffectedRow, err = tx.WithNoRow(querySQL); err != nil {
-			return err
+			return newInternalErr(err)
 		}
 		if nbAffectedRow != 1 {
-			return xerrors.New("error to remove link node and category")
+			return newNoContentErr(xerrors.New(fmt.Sprintf("number rows affected by remove link category node: %d", nbAffectedRow)))
 		}
 	}
 	return nil
 }
 
-func updateRelationNodes(tx postgres.Transaction, ids []string, nodeID, bookID, typeRelation string) error {
+func updateRelationNodes(tx postgres.Transaction, ids []string, nodeID, bookID, typeRelation string) xerror.Xerror {
 	var err error
 	var querySQL postgres.Query
 	var rows postgres.ScanRows
@@ -239,17 +241,17 @@ func updateRelationNodes(tx postgres.Transaction, ids []string, nodeID, bookID, 
 		nodeID,
 		typeRelation,
 	); err != nil {
-		return err
+		return newInternalErr(err)
 	}
 	if rows, err = tx.WithRows(querySQL); err != nil {
-		return err
+		return newInternalErr(err)
 	}
 	defer rows.Close()
 	sourceIDS := []string{}
 	for ok := true; ok; {
 		str := ""
 		if ok, err = rows.Next(&str); err != nil {
-			return err
+			return newInternalErr(err)
 		}
 		if ok {
 			sourceIDS = append(sourceIDS, str)
@@ -281,14 +283,14 @@ func updateRelationNodes(tx postgres.Transaction, ids []string, nodeID, bookID, 
 			bookID,
 			typeRelation,
 		); err != nil {
-			return err
+			return newInternalErr(err)
 		}
 		nbAffectedRow := int64(0)
 		if nbAffectedRow, err = tx.WithNoRow(querySQL); err != nil {
-			return err
+			return newInternalErr(err)
 		}
 		if nbAffectedRow != 1 {
-			return xerrors.New("linked node failed")
+			return newNoContentErr(xerrors.New(fmt.Sprintf("number rows affected to add links relation node: %d", nbAffectedRow)))
 		}
 	}
 	// remove the rest of source IDS because is deprecated
@@ -299,31 +301,32 @@ func updateRelationNodes(tx postgres.Transaction, ids []string, nodeID, bookID, 
 			nodeID,
 			typeRelation,
 		); err != nil {
-			return err
+			return newInternalErr(err)
 		}
 		nbAffectedRow := int64(0)
 		if nbAffectedRow, err = tx.WithNoRow(querySQL); err != nil {
-			return err
+			return newInternalErr(err)
 		}
 		if nbAffectedRow != 1 {
-			return xerrors.New("error to remove link conditionnal node")
+			return newNoContentErr(xerrors.New(fmt.Sprintf("number rows affected to remove links relation node: %d", nbAffectedRow)))
 		}
 	}
 	return nil
 }
 
 // ReadNode by id
-func (c controller) ReadNode(nodeID, bookID, userID string) (model.Node, error) {
+func (c controller) ReadNode(nodeID, bookID, userID string) (model.Node, xerror.Xerror) {
 	var node model.Node
 	var querySQL postgres.Query
 	var tx postgres.Transaction
 	var err error
+	var xerr xerror.Xerror
 	var row postgres.ScanRow
 	var rows postgres.ScanRows
 
 	node.Identifier = nodeID
 	if tx, err = c.driverSQL.NewTransaction(); err != nil {
-		return model.Node{}, err
+		return model.Node{}, newInternalErr(err)
 	}
 	defer tx.Rollback()
 	// content node
@@ -333,40 +336,40 @@ func (c controller) ReadNode(nodeID, bookID, userID string) (model.Node, error) 
 		bookID,
 		userID,
 	); err != nil {
-		return model.Node{}, err
+		return model.Node{}, newInternalErr(err)
 	}
 	if row, err = tx.WithRow(querySQL); err != nil {
-		return model.Node{}, err
+		return model.Node{}, newInternalErr(err)
 	}
 	if err = row.Scan(&node.Title, &node.Description, &node.Content); err != nil {
-		return model.Node{}, err
+		return model.Node{}, catchErr(err)
 	}
 	// categories list
 	str = `SELECT id_category FROM h_link_node_category WHERE id_node = $1`
 	if querySQL, err = postgres.NewQuery(str, nodeID); err != nil {
-		return model.Node{}, err
+		return model.Node{}, newInternalErr(err)
 	}
 	if rows, err = tx.WithRows(querySQL); err != nil {
-		return model.Node{}, err
+		return model.Node{}, newInternalErr(err)
 	}
 	defer rows.Close()
 	ok := true
 	for ok {
 		id := ""
 		if ok, err = rows.Next(&id); err != nil {
-			return model.Node{}, err
+			return model.Node{}, newInternalErr(err)
 		}
 		if ok {
 			node.CategoryIDS = append(node.CategoryIDS, id)
 		}
 	}
 	// child node list
-	if node.ChildIDS, err = getRelationNode(tx, nodeID, dto.TypeLink); err != nil {
-		return model.Node{}, err
+	if node.ChildIDS, xerr = getRelationNode(tx, nodeID, dto.TypeLink); xerr != nil {
+		return model.Node{}, xerr
 	}
 	// conditionnal node list
-	if node.ContionnalIDS, err = getRelationNode(tx, nodeID, dto.TypeConditionnal); err != nil {
-		return model.Node{}, err
+	if node.ContionnalIDS, xerr = getRelationNode(tx, nodeID, dto.TypeConditionnal); xerr != nil {
+		return model.Node{}, xerr
 	}
 
 	tx.Commit()
@@ -374,7 +377,7 @@ func (c controller) ReadNode(nodeID, bookID, userID string) (model.Node, error) 
 }
 
 // Return slice of ids to the relation with the node
-func getRelationNode(tx postgres.Transaction, nodeID, relationType string) ([]string, error) {
+func getRelationNode(tx postgres.Transaction, nodeID, relationType string) ([]string, xerror.Xerror) {
 	var querySQL postgres.Query
 	var err error
 	var rows postgres.ScanRows
@@ -386,10 +389,10 @@ func getRelationNode(tx postgres.Transaction, nodeID, relationType string) ([]st
 		nodeID,
 		relationType,
 	); err != nil {
-		return nil, err
+		return nil, newInternalErr(err)
 	}
 	if rows, err = tx.WithRows(querySQL); err != nil {
-		return nil, err
+		return nil, newInternalErr(err)
 	}
 	defer rows.Close()
 
@@ -397,7 +400,7 @@ func getRelationNode(tx postgres.Transaction, nodeID, relationType string) ([]st
 	for ok {
 		id := ""
 		if ok, err = rows.Next(&id); err != nil {
-			return nil, err
+			return nil, newInternalErr(err)
 		}
 		if ok {
 			result = append(result, id)
@@ -407,21 +410,21 @@ func getRelationNode(tx postgres.Transaction, nodeID, relationType string) ([]st
 }
 
 // ReadNodes to the bookID given and return list nodes ids
-func (c controller) ReadNodes(bookID, userID string) ([]string, error) {
-	var ids []string
+func (c controller) ReadNodes(bookID, userID string) ([]string, xerror.Xerror) {
 	var querySQL postgres.Query
 	var rows postgres.ScanRows
 	var err error
 
+	ids := []string{}
 	str := `SELECT id FROM h_node WHERE book_id = $1 AND exists(SELECT id FROM h_book WHERE id = $1 AND owner_id = $2)`
 	if querySQL, err = postgres.NewQuery(str,
 		bookID,
 		userID,
 	); err != nil {
-		return nil, err
+		return nil, newInternalErr(err)
 	}
 	if rows, err = c.driverSQL.WithRows(querySQL); err != nil {
-		return nil, err
+		return nil, newInternalErr(err)
 	}
 	defer rows.Close()
 
@@ -429,7 +432,7 @@ func (c controller) ReadNodes(bookID, userID string) ([]string, error) {
 	for ok {
 		id := ""
 		if ok, err = rows.Next(&id); err != nil {
-			return nil, err
+			return nil, newInternalErr(err)
 		}
 		if ok {
 			ids = append(ids, id)
@@ -439,7 +442,7 @@ func (c controller) ReadNodes(bookID, userID string) ([]string, error) {
 }
 
 // DeleteNode from the database
-func (c controller) DeleteNode(nodeID, userID, bookID string) error {
+func (c controller) DeleteNode(nodeID, userID, bookID string) xerror.Xerror {
 	var err error
 	var querySQL postgres.Query
 	var str string
@@ -454,13 +457,13 @@ func (c controller) DeleteNode(nodeID, userID, bookID string) error {
 		bookID,
 		userID,
 	); err != nil {
-		return err
+		return newInternalErr(err)
 	}
 	if nbAffectedRow, err = c.driverSQL.WithNoRow(querySQL); err != nil {
-		return err
+		return newInternalErr(err)
 	}
 	if nbAffectedRow != 1 {
-		return xerrors.New("error to update the category")
+		return newNoContentErr(xerrors.New(fmt.Sprintf("number rows affected by the delete node request: %d", nbAffectedRow)))
 	}
 	return nil
 }

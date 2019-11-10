@@ -26,7 +26,7 @@ func (c Category) Validate() error {
 	case tPerson, tCustom, tPlace:
 		break
 	default:
-		return xerrors.New("unknown type provided")
+		return xerrors.New("unknow type category: " + c.Type)
 	}
 	return nil
 }

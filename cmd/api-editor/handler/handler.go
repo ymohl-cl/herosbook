@@ -1,9 +1,15 @@
 package handler
 
 import (
+	"fmt"
+	"net/http"
+	"runtime"
+
 	"github.com/labstack/echo"
 	"github.com/ymohl-cl/herosbook/cmd/api-editor/controller"
 	"github.com/ymohl-cl/herosbook/pkg/app/jsonvalidator"
+	"github.com/ymohl-cl/herosbook/pkg/model"
+	"github.com/ymohl-cl/herosbook/pkg/xerror"
 )
 
 // Handler data with drivers need to make the job
@@ -40,4 +46,38 @@ func New(appName string, server *echo.Group) error {
 	server.DELETE("/books/:id/node/:id_node", h.RemoveNode)
 
 	return nil
+}
+
+func (h Handler) httpResponse(xerr xerror.Xerror) (int, interface{}) {
+	var code int
+
+	m := model.Message{ID: xerr.ID()}
+	fmt.Println(fmt.Sprintf("{[O;O] id: %s - [stack: %s %s]}", xerr.ID(), getFormatStack(), xerr.Error()))
+	switch xerr.Code() {
+	case -1:
+		m.Message = "invalid input, you can read the api guide on http://heroesbook/apiguide.fr"
+		code = http.StatusBadRequest
+	case controller.ErrDuplicateKey:
+		m.Message = "duplicate resources are prohibited"
+		code = http.StatusBadRequest
+	case controller.ErrNoResult:
+		code = http.StatusNoContent
+	default:
+		m.Message = fmt.Sprintf("oups, it would seem that something supernatural is happening. Are you a Heroes ? You can help us with report the next code error: %s", xerr.ID())
+		code = http.StatusInternalServerError
+	}
+	return code, &m
+}
+
+func getFormatStack() string {
+	var format string
+
+	if _, file, line, ok := runtime.Caller(2); ok {
+		format += fmt.Sprintf("in %s:%d -> ", file, line)
+	}
+	if _, file, line, ok := runtime.Caller(3); ok {
+		format += fmt.Sprintf("in %s:%d -> ", file, line)
+	}
+	format += "detail error: "
+	return format
 }
