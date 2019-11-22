@@ -38,8 +38,13 @@ services:
         build:
             context: view/editor
             dockerfile: Dockerfile
+            args:
+                - API_HOST_ARG=h-api-editor
+                - API_PORT_ARG=4242
         ports:
             - 8080:8080
+        links:
+            - h-api-editor:h-api-editor
 
     postgres:
         image: postgres:12.0

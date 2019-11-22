@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+	<v-container>
 		<div v-if="!createNewBookDisplay">
 			<confirmDialog 
 				v-bind:open="wantDeleteBookId!=''" 
@@ -39,22 +39,22 @@
 		<div v-if="createNewBookDisplay">
 			<h1>Votre nouvelle histoire</h1>
 			<v-form ref="form" v-model="validForm">
-        <v-text-field  v-model="formCreateBook.title" :rules="titleRules" label="Titre" placeholder="Titre" required solo></v-text-field>
-        <v-textarea  v-model="formCreateBook.description" label="Description" placeholder="Description" solo></v-textarea>
-				<v-select v-model="formCreateBook.genre" 
-				:rules="genreRules"
-				:items="genres" 
-				item-text="name"
-				item-value="key"
-				label="Genre" solo></v-select>
-        <div class="text-right">
-          <v-btn :disabled="!isValid()" color="success" @click="createBook()">
-            Créer le projet
-          </v-btn>
-        </div>
-      </v-form>
+				<v-text-field  v-model="formCreateBook.title" :rules="titleRules" label="Titre" placeholder="Titre" required solo></v-text-field>
+				<v-textarea  v-model="formCreateBook.description" label="Description" placeholder="Description" solo></v-textarea>
+						<v-select v-model="formCreateBook.genre" 
+						:rules="genreRules"
+						:items="genres" 
+						item-text="name"
+						item-value="key"
+						label="Genre" solo></v-select>
+				<div class="text-right">
+					<v-btn :disabled="!isValid()" color="success" @click="createBook()">
+					Créer le projet
+					</v-btn>
+				</div>
+			</v-form>
 		</div>
-  </v-container>
+	</v-container>
 </template>
 
 <script src="./home.ts"></script>
