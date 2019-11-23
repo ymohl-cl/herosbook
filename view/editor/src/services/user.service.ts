@@ -1,5 +1,3 @@
-import HttpService from './http.service';
-
 /**
  * Service to manage connection and user
  */
@@ -23,7 +21,7 @@ class CUserService {
 
   public getPseudo():string {
     if (this.isConnected() && this.user != null
-		&& this.user.pseudo != null) {
+       && this.user.pseudo != null) {
       return this.user.pseudo;
     }
     return '';

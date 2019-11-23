@@ -39,7 +39,7 @@ services:
             context: view/editor
             dockerfile: Dockerfile
             args:
-                - API_HOST_ARG=h-api-editor
+                - API_HOST_ARG=http://127.0.0.1
                 - API_PORT_ARG=4242
         ports:
             - 8080:8080

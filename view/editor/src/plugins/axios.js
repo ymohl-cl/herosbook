@@ -1,5 +1,7 @@
 'use strict';
 
+/* eslint-disable */
+
 import Vue from 'vue';
 import axios from 'axios';
 
@@ -37,7 +39,7 @@ _axios.interceptors.response.use(
 
 );
 
-Plugin.install = function (Vue, options) {
+Plugin.install = (Vue, options) => {
   Vue.axios = _axios;
   window.axios = _axios;
   Object.defineProperties(Vue.prototype, {

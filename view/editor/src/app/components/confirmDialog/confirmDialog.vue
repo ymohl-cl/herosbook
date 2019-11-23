@@ -1,6 +1,6 @@
 <template>
   <v-container>
-		<v-dialog v-model="open" max-width="290">
+    <v-dialog v-model="open" max-width="290">
       <v-card>
         <v-card-title class="headline">{{ title }}</v-card-title>
         <v-card-text>{{ description }}</v-card-text>

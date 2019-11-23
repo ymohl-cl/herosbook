@@ -14,7 +14,7 @@ class CNavService {
   }
 
   public isSameRoute(route:string):boolean {
-    return router.currentRoute.name == route;
+    return router.currentRoute.name === route;
   }
 }
 

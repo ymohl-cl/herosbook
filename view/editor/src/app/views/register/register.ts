@@ -1,11 +1,17 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import httpService from '../../../services/http.service';
-import navService from '../../../services/nav.service';
+import httpService from '@/services/http.service';
+import navService from '@/services/nav.service';
 
 @Component
 export default class Register extends Vue {
   public validForm:boolean = false;
+
+  public genres:string[] = [
+    'Male',
+    'Female',
+    'Anothers',
+  ];
 
   public pseudo:string = '';
 
@@ -20,7 +26,6 @@ export default class Register extends Vue {
   public age:number = 0;
 
   public genre:string = '';
-
 
   public showPassword:boolean = false;
 
@@ -53,12 +58,7 @@ export default class Register extends Vue {
     (v:string) => !!v || 'Genre is required',
   ];
 
-
   public displayAlert:boolean = false;
-
-  constructor() {
-    super();
-  }
 
   public mounted() {
     this.justPing();
@@ -89,7 +89,9 @@ export default class Register extends Vue {
     });
   }
 
-  public getURL() { return httpService.getDisplayServerURL(); }
+  public getURL():string {
+    return httpService.getDisplayServerURL();
+  }
 
   public justPing() {
     this.displayAlert = false;

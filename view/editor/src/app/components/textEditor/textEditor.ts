@@ -6,7 +6,4 @@ import Component from 'vue-class-component';
  */
 @Component
 export default class TextEditor extends Vue {
-  constructor() {
-    super();
-  }
 }

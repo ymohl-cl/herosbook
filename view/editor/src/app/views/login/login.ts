@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import httpService from '../../../services/http.service';
-import navService from '../../../services/nav.service';
+import httpService from '@/services/http.service';
+import navService from '@/services/nav.service';
 import userService from '@/services/user.service';
 
 @Component
@@ -24,10 +24,6 @@ export default class Login extends Vue {
 
   public displayAlert:boolean = false;
 
-  constructor() {
-    super();
-  }
-
   public goRegister() {
     navService.changeView('register');
   }
@@ -45,14 +41,16 @@ export default class Login extends Vue {
     headers = httpService.appendHeaders(headers, 'password', btoa(`${this.pseudo}:${this.password}`));
     httpService.post('login', {}, headers, (response:any) => {
       userService.connectionDone(response.data.token, response.data.user);
-    	navService.changeView('/');
+      navService.changeView('/');
     }, (error:any) => {
       this.displayAlert = true;
       console.log(error);
     });
   }
 
-  public getURL() { return httpService.getDisplayServerURL(); }
+  public getURL():string {
+    return httpService.getDisplayServerURL();
+  }
 
   public justPing() {
     this.displayAlert = false;
