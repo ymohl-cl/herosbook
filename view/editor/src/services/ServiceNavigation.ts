@@ -4,7 +4,7 @@ import router from '@/router';
 /**
  * Service to manage navigation between views and rewrite url
  */
-class CNavService {
+class Navigation {
   public changeView(route:string):void{
     router.push(route);
   }
@@ -18,5 +18,5 @@ class CNavService {
   }
 }
 
-const NavService = new CNavService();
-export default NavService;
+const navigation = new Navigation();
+export default navigation;

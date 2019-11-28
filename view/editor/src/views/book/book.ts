@@ -1,8 +1,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
-
 import userService from '@/services/user.service';
-import navService from '@/services/nav.service';
+import navService from '@/services/ServiceNavigation';
 import httpService from '@/services/http.service';
 
 @Component

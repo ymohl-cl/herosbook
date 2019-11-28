@@ -1,17 +1,19 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import confirmDialog from '../../components/confirmDialog/confirmDialog.vue';
+import confirmDialog from '@/components/confirmDialog/confirmDialog.vue';
 
 
 import userService from '@/services/user.service';
-import navService from '@/services/nav.service';
+import navService from '@/services/ServiceNavigation';
 import httpService from '@/services/http.service';
+import session, {Session} from '@/services/ServiceSession';
+import Book from '@/services/ControllerBook';
 
 @Component({
   components: { confirmDialog },
 })
 export default class Home extends Vue {
-  public books:any[] = [];
+  public session:Session = session;
 
   public getBooksLaunch:boolean = false;
 
@@ -47,7 +49,7 @@ export default class Home extends Vue {
   public deleteBookLaunch:boolean = false;
 
   public mounted() {
-    if (!userService.isConnected()) {
+    if (!this.session.user.isConnected()) {
       navService.replaceView('/login');
     } else {
       this.getBooks();
@@ -58,7 +60,7 @@ export default class Home extends Vue {
     this.getBooksLaunch = true;
     const headers = httpService.appendHeaders(httpService.getDefaultHeaders(), 'Authorization', `Bearer ${userService.getToken()}`);
     httpService.post('api/books/_searches', {}, headers, (response:any) => {
-      this.books = response.data;
+      this.session.books = response.data;
       this.getBooksLaunch = false;
     }, (error:any) => {
       this.getBooksLaunch = false;
@@ -75,14 +77,9 @@ export default class Home extends Vue {
 
   public createBook() {
     this.createBookLaunch = true;
-    const headers = httpService.appendHeaders(httpService.getDefaultHeaders(), 'Authorization', `Bearer ${userService.getToken()}`);
-    httpService.post('api/books', this.formCreateBook, headers, (response:any) => {
-      this.createBookLaunch = false;
-      this.createNewBookDisplay = false;
-      this.goBook(response.data.identifier);
-    }, (error:any) => {
-      this.createBookLaunch = false;
-    });
+    let b = new Book("one title example", "one description example", "one genre exemple");
+    this.session.addBook(b)
+    this.createBookLaunch = false;
   }
 
   public openDeleteDialog(idBook:string) {
@@ -96,7 +93,7 @@ export default class Home extends Vue {
       const headers = httpService.appendHeaders(httpService.getDefaultHeaders(), 'Authorization', `Bearer ${userService.getToken()}`);
       httpService.delete(`api/books/${this.wantDeleteBookId}`, headers, (response:any) => {
         this.deleteBookLaunch = false;
-        this.books = this.books.filter(element => element.identifier !== this.wantDeleteBookId);
+        this.session.removeBook(this.wantDeleteBookId)
         this.wantDeleteBookId = '';
       }, (error:any) => {
         this.deleteBookLaunch = false;

@@ -1,39 +1,48 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from './app/views/home/home.vue';
+import Home from '@/views/home/home.vue';
 
 Vue.use(Router);
 
+export const landingPagePath = '/landing'
+export const resumePagePath = '/'
+export const loginPagePath = '/login'
+export const registerPagePath = '/register'
+
 export default new Router({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: Home,
-    },
-    {
-      path: '/login',
-      name: 'login',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './app/views/login/login.vue'),
-    },
-    {
-      path: '/register',
-      name: 'register',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './app/views/register/register.vue'),
-    },
-    {
-      path: '/book/:id',
-      name: 'book',
-      component: () => import('./app/views/book/book.vue'),
-    },
-    { path: '*', redirect: '/' },
-  ],
+	mode: 'history',
+	base: process.env.BASE_URL,
+	routes: [
+/*		{
+			path: '/',
+			name: 'home',
+			component: Home,
+		},*/
+		{
+			path: resumePagePath,
+			name: 'resume-home-page',
+			component: () => import('@/views/ResumeHome/ResumeHome.vue'),
+		},
+		{
+			path: loginPagePath,
+			name: 'login-view',
+			component: () => import('@/views/ViewLogin/ViewLogin.vue'),
+		},
+		{
+			path: registerPagePath,
+			name: 'register-view',
+			component: () => import('@/views/ViewRegister/ViewRegister.vue'),
+		},
+		{
+			path: '/book/:id',
+			name: 'book',
+			component: () => import('@/views/book/book.vue'),
+		},
+		{
+			path: landingPagePath,
+			name: 'landing-page',
+			component: () => import('@/views/LandingPage/LandingPage.vue'),
+		},
+		{ path: '*', redirect: '/' },
+	],
 });
