@@ -1,6 +1,6 @@
-'use strict';
-
 /* eslint-disable */
+
+'use strict';
 
 import Vue from 'vue';
 import axios from 'axios';

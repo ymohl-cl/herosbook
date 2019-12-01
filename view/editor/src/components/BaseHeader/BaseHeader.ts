@@ -1,9 +1,5 @@
-import Vue from 'vue';
-import Component from 'vue-class-component';
-import navigation from '@/services/ServiceNavigation'
-import session, {Session} from '@/services/ServiceSession';
-import * as route from '@/router'
-
+import Vue from "vue"
+import Component from "vue-class-component"
 
 export class ItemMenu {
 	title: string
@@ -15,20 +11,39 @@ export class ItemMenu {
 	}
 }
 
-@Component
-export default class BaseHeader extends Vue {
-	session: Session = session
-	menu: ItemMenu[] = [
-		new ItemMenu("profil", this.loadProfile),
-		new ItemMenu("disconnect", this.session.user.disconnect)]
+function buildMenu(items: any[], disconnectF: () => void): ItemMenu[] {
+	const menu: ItemMenu[] = []
 
-	loadProfile() {
-		console.log("load profile view")
+	items.forEach((item:ItemMenu) => {
+		menu.push(new ItemMenu(item.title, item.f))
+	})
+	menu.push(new ItemMenu("Disconnect", disconnectF))
+	return menu
+}
+
+@Component({
+	props: {
+		connected: { type: Boolean, default: false, required: true },
+		pseudo: { type: String, default: "", required: true },
+		buildMenu: { type: Array, required: true },
+		disconnectFunction: { type: Function, required: true },
+		loginFunction: { type: Function, required: true },
+		registerFunction: { type: Function, required: true },
+	},
+})
+export default class BaseHeader extends Vue {
+	menu: ItemMenu[] = []
+
+	disconnect() {
+		this.$props.disconnectFunction()
 	}
+
 	register() {
-		navigation.replaceView(route.registerPagePath)
+		this.$props.registerFunction()
 	}
+
 	login() {
-		navigation.replaceView(route.loginPagePath)
+		this.menu = buildMenu(this.$props.buildMenu, this.$props.disconnectFunction)
+		this.$props.loginFunction()
 	}
 }

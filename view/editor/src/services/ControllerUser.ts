@@ -1,4 +1,4 @@
-import httpService from '@/services/http.service'
+import httpService from "@/services/ServiceHttp"
 
 export default class User {
 	identifier: string = ""
@@ -13,11 +13,13 @@ export default class User {
 	private _token: string = ""
 
 	login(username: string, password: string, callbackSucess: () => void) {
-		let headers = httpService.appendHeaders(
+		const headers = httpService.appendHeaders(
 			httpService.appendHeaders(httpService.getDefaultHeaders(),
-			'username', username),
-			'password', btoa(`${username}:${password}`))
-		httpService.post('login', {}, headers, (resp:any) => {
+				"username", username),
+			"password", btoa(`${username}:${password}`),
+		)
+
+		httpService.post("login", {}, headers, (resp:any) => {
 			this.unmarshall(resp.data)
 			this._connect = true
 			callbackSucess()
@@ -26,6 +28,7 @@ export default class User {
 			console.log(error)
 		})
 	}
+
 	unmarshall(json: any) {
 		this.identifier = json.user.identifier
 		this.pseudo = json.user.pseudo
@@ -36,22 +39,27 @@ export default class User {
 		this.email = json.user.email
 		this._token = json.token
 	}
+
 	record(password: string, callbackSucess: () => void) {
-		let headers = httpService.appendHeaders(httpService.getDefaultHeaders(),
-			'password', btoa(`${this.pseudo}:${password}`))
-		httpService.post('register', this, headers, (resp: any) => {
+		const headers = httpService.appendHeaders(httpService.getDefaultHeaders(),
+			"password", btoa(`${this.pseudo}:${password}`))
+
+		httpService.post("register", this, headers, (resp: any) => {
 			callbackSucess()
 		}, (error:any) => {
 			console.log("error")
 			console.log(error)
 		})
 	}
+
 	isConnected(): boolean {
 		return this._connect
 	}
+
 	getToken(): string {
 		return this._token
 	}
+
 	disconnect() {
 		this._connect = false
 		this._token = ""

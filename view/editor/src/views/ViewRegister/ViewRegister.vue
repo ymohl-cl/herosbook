@@ -10,17 +10,17 @@
 				<v-text-field v-model="session.user.email" :rules="emailRules" label="Email"
 					placeholder="Email" required solo></v-text-field>
 				<v-text-field v-model="session.user.password" :rules="passwordRules" label="Password"
-				 placeholder="Password"  required  solo
+					placeholder="Password"  required  solo
 					:append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
 					:type="showPass ? 'text' : 'password'"
 					@click:append="showPass = !showPass"
 				></v-text-field>
 				<v-text-field v-model="session.user.lastName" :rules="lastNameRules"
-					 label="LastName" placeholder="LastName" required solo></v-text-field>
+					label="LastName" placeholder="LastName" required solo></v-text-field>
 				<v-text-field v-model="session.user.firstName" :rules="firstNameRules" label="FirstName"
-					 placeholder="FirstName" required solo></v-text-field>
+					placeholder="FirstName" required solo></v-text-field>
 				<v-text-field v-model.number="session.user.age" type="number" :rules="ageRules" label="Age"
-					 placeholder="Age" required solo></v-text-field>
+					placeholder="Age" required solo></v-text-field>
 				<v-select v-model="session.user.genre" :items="genres" :rules="genreRules" label="Genre" required solo>
 				</v-select>
 				<div class="text-right">

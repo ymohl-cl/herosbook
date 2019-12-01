@@ -4,8 +4,8 @@
 	<v-app-bar color="orange" dark absolute>
 		<v-toolbar-title>Hereos Book</v-toolbar-title>
 		<v-spacer></v-spacer>
-		<div v-if="session.user.isConnected()">
-			<v-toolbar-title>{{ session.user.pseudo }}</v-toolbar-title>
+		<div v-if="connected">
+			<v-toolbar-title class="d-inline">{{ pseudo }}</v-toolbar-title>
 			<v-menu left bottom>
 				<template v-slot:activator="{ on }">
 					<v-btn icon v-on="on">
@@ -29,7 +29,6 @@
 	<v-container></v-container>
 	<v-container></v-container>
 	<v-container></v-container>
-
 	</div>
 </template>
 <script src="./BaseHeader.ts"></script>

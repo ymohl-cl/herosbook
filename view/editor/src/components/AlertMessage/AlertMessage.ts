@@ -1,10 +1,10 @@
-import Vue from 'vue'
-import Component from 'vue-class-component'
+import Vue from "vue"
+import Component from "vue-class-component"
 
-export const WarningMessage:string = 'warning'
-export const InfoMessage:string = 'info'
-export const ErrorMessage:string = 'error'
-export const SucessMessage:string = 'sucess'
+export const WarningMessage:string = "warning"
+export const InfoMessage:string = "info"
+export const ErrorMessage:string = "error"
+export const SucessMessage:string = "sucess"
 const timeoutDuration = 10000
 
 export class Message {
@@ -36,6 +36,7 @@ export default class AlertMessage extends Vue {
 			console.log("close message")
 		}, timeoutDuration)
 	}
+
 	removeMessage(id: number) {
 		this.listMessage.splice(id, 1)
 	}
