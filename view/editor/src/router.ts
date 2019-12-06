@@ -7,11 +7,13 @@ export const landingPagePath = "/landing"
 export const resumePagePath = "/"
 export const loginPagePath = "/login"
 export const registerPagePath = "/register"
-export const bookPagePath = "/book/:id"
+export const bookPagePath = "/book/view/:id"
 export const createBookPagePath = "/book/create"
 
 export function buildBookPagePath(identifier: string): string {
-	return `/book/${identifier}`
+	let a:string = `/book/view/${identifier}`
+	console.log("route: ", a)
+	return a
 }
 
 export default new Router({

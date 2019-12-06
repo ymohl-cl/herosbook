@@ -17,9 +17,7 @@ export class Session {
 	}
 
 	addBook(b: Book) {
-		b.record(this.user.getToken(), () => {
-			this.books.push(b)
-		})
+		this.books.push(b)
 	}
 
 	getBooks() {
@@ -37,5 +35,4 @@ export class Session {
 }
 
 const session = new Session()
-
 export default session

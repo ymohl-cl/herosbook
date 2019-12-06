@@ -32,7 +32,7 @@
 		</div>
 		<!-- FOR-EXAMPLE //-->
 		<div v-if="currentNode.identifier != ''" style="padding:10px; background-color:orange;">
-			<v-text-field  v-model="currentNode.title" label="Pseudo" placeholder="Pseudo" required solo
+			<v-text-field v-model="currentNode.title" label="Pseudo" placeholder="Pseudo" required solo
 			></v-text-field>
 			<TextEditor v-bind:text="currentNode.content" v-bind:textChangedFunction="updateTextNode"></TextEditor>
 			<v-btn outlined color="success" @click="saveCurrentNode()">Sauvegarder</v-btn>

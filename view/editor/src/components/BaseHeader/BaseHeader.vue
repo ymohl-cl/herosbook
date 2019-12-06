@@ -20,8 +20,8 @@
 			</v-menu>
 		</div>
 		<div v-else>
-				<v-btn class="ma-2 orange--text" color="white" dark @click="register()">Register</v-btn>
-				<v-btn class="ma-2 orange--text" color="white" dark @click="login()">login</v-btn>
+			<v-btn class="ma-2 orange--text" color="white" dark @click="register()">Register</v-btn>
+			<v-btn class="ma-2 orange--text" color="white" dark @click="login()">login</v-btn>
 		</div>
 	</v-app-bar>
 	</v-layout>
