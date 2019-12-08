@@ -14,6 +14,7 @@ export default class ViewBook extends Vue {
 	book:Book = new Book("", "", "")
 	nodes:Node[] = []
 	currentNode:Node = new Node("", "", "")
+	editNodeMode:boolean = false;
 
 	mounted() {
 		if (!session.user.isConnected() || this.$route.params.id == null) {
@@ -29,6 +30,14 @@ export default class ViewBook extends Vue {
 				}
 			})
 		}
+	}
+
+	setCurrentNode(node:Node){
+		this.currentNode = node
+	}
+
+	setEditNodeMode(mode:boolean){
+		this.editNodeMode = mode
 	}
 
 	createNode() {
