@@ -19,7 +19,30 @@ export default class Node {
 		this.title = json.title
 		this.description = json.description
 		this.content = json.content
-		this.categories = json.categories
+		// TODO ERROR json.categories null
+		if (json.categories !== null) {
+			this.categories = json.categories
+		} else {
+			this.categories = []
+		}
+	}
+
+	addCategory(catIdentifier:string) {
+		const index = this.categories.findIndex(id => id === catIdentifier)
+
+		if (index === -1) {
+			this.categories.push(catIdentifier)
+		}
+	}
+
+	removeCategory(catIdentifier:string) {
+		const index = this.categories.findIndex(id => id === catIdentifier)
+
+		this.removeCategoryByIndex(index)
+	}
+
+	removeCategoryByIndex(index:number) {
+		return this.categories.splice(index, 1)
 	}
 
 	get(identifier:string, userToken:string, callbackSuccess: () => void) {

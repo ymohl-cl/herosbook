@@ -1,47 +1,31 @@
 import httpService from "@/services/ServiceHttp"
-import Category from "@/services/ControllerCategory"
 
-export default class Book {
+export default class Category {
+	bookId:string = ""
 	identifier: string = ""
 	title: string
 	description: string
-	genre: string
-	publish: boolean = false
-	owner: string = ""
-	nodeIds: string[] = []
-	creationDate: Date = new Date(0)
-	categories: Category[] = []
+	type: string = ""
 
-	constructor(title: string, description: string, genre: string) {
+	constructor(bookId:string, title: string, description: string, type: string) {
+		this.bookId = bookId
 		this.title = title
 		this.description = description
-		this.genre = genre
+		this.type = type
 	}
 
 	unmarshall(json: any) {
 		this.identifier = json.identifier
-		this.publish = json.publish
-		this.owner = json.owner
-		this.nodeIds = json.nodeIds
-		this.creationDate = json.creationDate
 		this.title = json.title
 		this.description = json.description
-		this.genre = json.genre
-		if (json.categories !== null) { // TOUPDATE
-			for (let i = 0; i < json.categories.length; i += 1) {
-				const category = new Category(this.identifier, "", "", "")
-
-				category.unmarshall(json.categories[i])
-				this.categories.push(category)
-			}
-		}
+		this.type = json.type
 	}
 
 	get(identifier:string, userToken:string, callbackSuccess: () => void) {
 		const headers = httpService.appendHeaders(httpService.getDefaultHeaders(),
 			"Authorization", `Bearer ${userToken}`)
 
-		httpService.get(`api/books/${identifier}`, headers, (resp:any) => {
+		httpService.get(`api/books/${this.bookId}/category/${identifier}`, headers, (resp:any) => {
 			this.unmarshall(resp.data)
 			callbackSuccess()
 		}, (error:any) => {
@@ -54,7 +38,7 @@ export default class Book {
 		const headers = httpService.appendHeaders(httpService.getDefaultHeaders(),
 			"Authorization", `Bearer ${userToken}`)
 
-		httpService.post("api/books", this, headers, (resp: any) => {
+		httpService.post(`api/books/${this.bookId}/category`, this, headers, (resp: any) => {
 			this.unmarshall(resp.data)
 			callbackSuccess()
 		}, (error:any) => {
@@ -67,7 +51,7 @@ export default class Book {
 		const headers = httpService.appendHeaders(httpService.getDefaultHeaders(),
 			"Authorization", `Bearer ${userToken}`)
 
-		httpService.put("api/books", this, headers, (resp: any) => {
+		httpService.put(`api/books/${this.bookId}/category`, this, headers, (resp: any) => {
 			callbackSuccess()
 		}, (error:any) => {
 			console.log("error")
@@ -79,22 +63,11 @@ export default class Book {
 		const headers = httpService.appendHeaders(httpService.getDefaultHeaders(),
 			"Authorization", `Bearer ${userToken}`)
 
-		httpService.delete(`api/books/${this.identifier}`, headers, (resp:any) => {
+		httpService.delete(`api/books/${this.bookId}/category/${this.identifier}`, headers, (resp:any) => {
 			callbackSuccess()
 		}, (error:any) => {
 			console.log("error")
 			console.log(error)
 		})
-	}
-
-	deleteCategory(userToken:string, catIdentifier:string, callbackSuccess:() => void) {
-		const index = this.categories.findIndex(category => category.identifier === catIdentifier)
-
-		if (index > -1) {
-			this.categories[index].delete(userToken, () => {
-				this.categories.splice(index, 1)
-				callbackSuccess()
-			})
-		}
 	}
 }

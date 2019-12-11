@@ -16,28 +16,32 @@
 				v-bind:description="'Êtes-vous sur de vouloir supprimer ce projet ?'"
 			></ConfirmDialog>
 			<v-container>
-				<v-card class="mx-auto" max-width="344" outlined
-					v-for="book in session.books"
-					v-bind:key="book.identifier"
-				>
-				<v-img height="250" src="@/assets/book-no-cover.png"></v-img>
-				<v-card-title>{{ book.title }}</v-card-title>
-				<v-card-text>
-					<div>{{ book.description }}</div>
-				</v-card-text>
-				<v-divider class="mx-4"></v-divider>
-				<v-card-text>
-					<p  style="display: inline" class="font-weight-black">Genre: </p>
-					<p style="display: inline">{{ book.genre }}</p>
-					<br />
-					<p  style="display: inline" class="font-weight-black">Creation date: </p>
-					<p style="display: inline">Fictive date</p>
-				</v-card-text>
-				<v-card-actions>
-					<v-btn color="orange" @click="showBook(book.identifier)">Edit</v-btn>
-					<v-btn color="error" @click="() => { deleteBookId = book.identifier }">Delete</v-btn>
-				</v-card-actions>
-				</v-card>
+				<v-row>
+					<v-col cols="auto"
+							v-for="book in session.books"
+							v-bind:key="book.identifier"
+						>
+						<v-card class="mx-auto" max-width="344" outlined>
+						<v-img height="250" src="@/assets/book-no-cover.png"></v-img>
+						<v-card-title>{{ book.title }}</v-card-title>
+						<v-card-text>
+							<div>{{ book.description }}</div>
+						</v-card-text>
+						<v-divider class="mx-4"></v-divider>
+						<v-card-text>
+							<p  style="display: inline" class="font-weight-black">Genre: </p>
+							<p style="display: inline">{{ book.genre }}</p>
+							<br />
+							<p  style="display: inline" class="font-weight-black">Creation date: </p>
+							<p style="display: inline">Fictive date</p>
+						</v-card-text>
+						<v-card-actions>
+							<v-btn color="orange" @click="showBook(book.identifier)">Edit</v-btn>
+							<v-btn color="error" @click="() => { deleteBookId = book.identifier }">Delete</v-btn>
+						</v-card-actions>
+						</v-card>
+					</v-col>
+				</v-row>
 			</v-container>
 		</v-container>
 		<v-container v-else>
