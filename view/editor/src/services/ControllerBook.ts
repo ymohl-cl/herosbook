@@ -1,5 +1,18 @@
+import { AxiosResponse } from "axios"
 import httpService from "@/services/ServiceHttp"
 import Category from "@/services/ControllerCategory"
+
+export function getBooks(token: string):Book[] {
+	let books: Book[] = []
+	const headers = httpService.appendHeaders(
+		httpService.getDefaultHeaders(),
+		"Authorization", `Bearer ${token}`,
+	)
+	httpService.post("api/books/_searches", {}, headers, (resp: AxiosResponse) => {
+		books = resp.data
+	})
+	return books
+}
 
 export default class Book {
 	identifier: string = ""
@@ -41,12 +54,9 @@ export default class Book {
 		const headers = httpService.appendHeaders(httpService.getDefaultHeaders(),
 			"Authorization", `Bearer ${userToken}`)
 
-		httpService.get(`api/books/${identifier}`, headers, (resp:any) => {
+		httpService.get(`api/books/${identifier}`, headers, (resp:AxiosResponse) => {
 			this.unmarshall(resp.data)
 			callbackSuccess()
-		}, (error:any) => {
-			console.log("error")
-			console.log(error)
 		})
 	}
 
@@ -54,12 +64,9 @@ export default class Book {
 		const headers = httpService.appendHeaders(httpService.getDefaultHeaders(),
 			"Authorization", `Bearer ${userToken}`)
 
-		httpService.post("api/books", this, headers, (resp: any) => {
+		httpService.post("api/books", this, headers, (resp: AxiosResponse) => {
 			this.unmarshall(resp.data)
 			callbackSuccess()
-		}, (error:any) => {
-			console.log("error")
-			console.log(error)
 		})
 	}
 
@@ -67,11 +74,8 @@ export default class Book {
 		const headers = httpService.appendHeaders(httpService.getDefaultHeaders(),
 			"Authorization", `Bearer ${userToken}`)
 
-		httpService.put("api/books", this, headers, (resp: any) => {
+		httpService.put("api/books", this, headers, (resp: AxiosResponse) => {
 			callbackSuccess()
-		}, (error:any) => {
-			console.log("error")
-			console.log(error)
 		})
 	}
 
@@ -79,11 +83,8 @@ export default class Book {
 		const headers = httpService.appendHeaders(httpService.getDefaultHeaders(),
 			"Authorization", `Bearer ${userToken}`)
 
-		httpService.delete(`api/books/${this.identifier}`, headers, (resp:any) => {
+		httpService.delete(`api/books/${this.identifier}`, headers, (resp:AxiosResponse) => {
 			callbackSuccess()
-		}, (error:any) => {
-			console.log("error")
-			console.log(error)
 		})
 	}
 

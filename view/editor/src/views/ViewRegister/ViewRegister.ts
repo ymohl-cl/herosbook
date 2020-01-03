@@ -32,6 +32,8 @@ export default class ViewRegister extends Vue {
 	}
 
 	register() {
-		this.session.user.record(this.password, () => {})
+		this.session.user.record(this.password, () => {
+			navigation.replaceView(route.loginPagePath)
+		})
 	}
 }

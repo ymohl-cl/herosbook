@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios"
 import httpService from "@/services/ServiceHttp"
 
 export default class User {
@@ -19,13 +20,10 @@ export default class User {
 			"password", btoa(`${username}:${password}`),
 		)
 
-		httpService.post("login", {}, headers, (resp:any) => {
+		httpService.post("login", {}, headers, (resp:AxiosResponse) => {
 			this.unmarshall(resp.data)
 			this._connect = true
 			callbackSucess()
-		}, (error:any) => {
-			console.log("error")
-			console.log(error)
 		})
 	}
 
@@ -41,14 +39,13 @@ export default class User {
 	}
 
 	record(password: string, callbackSucess: () => void) {
+		console.log("me: ", this.pseudo)
+		console.log("password: ", password)
 		const headers = httpService.appendHeaders(httpService.getDefaultHeaders(),
 			"password", btoa(`${this.pseudo}:${password}`))
 
-		httpService.post("register", this, headers, (resp: any) => {
+		httpService.post("register", this, headers, (resp: AxiosResponse) => {
 			callbackSucess()
-		}, (error:any) => {
-			console.log("error")
-			console.log(error)
 		})
 	}
 

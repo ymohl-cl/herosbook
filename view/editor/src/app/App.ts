@@ -7,6 +7,7 @@ import AlertVue from "@/components/AlertMessage/AlertMessage.vue"
 import navigation from "@/services/ServiceNavigation"
 import session, { Session } from "@/services/ServiceSession"
 import * as route from "@/router"
+import httpService from '@/services/ServiceHttp'
 
 @Component({
 	name: "App",
@@ -15,17 +16,17 @@ import * as route from "@/router"
 export default class App extends Vue {
 	session:Session = session
 
-
 	mounted() {
-		// TODO: implement ping method to start or not the application
+		this.session.alert = this.$refs.AlertMessage as AlertMessage
+		httpService.setAlertMessage(this.session.alert)
+
+		const headers = httpService.getDefaultHeaders()
+		httpService.get("ping", headers, () => {})
 		if (!session.user.isConnected()) {
 			navigation.replaceView(route.landingPagePath)
 		} else {
 			navigation.replaceView(route.resumePagePath)
 		}
-
-		this.session.alert = this.$refs.AlertMessage as AlertMessage
-		this.session.alert.addAlert("test", Alert.ErrorMessage)
 	}
 
 	menuBuilder(): ItemMenu[] {

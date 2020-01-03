@@ -4,7 +4,7 @@ import Component from "vue-class-component"
 export const WarningMessage:string = "warning"
 export const InfoMessage:string = "info"
 export const ErrorMessage:string = "error"
-export const SucessMessage:string = "sucess"
+export const SucessMessage:string = "success"
 const timeoutDuration = 10000
 
 export class Message {

@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios"
 import httpService from "@/services/ServiceHttp"
 
 export default class Category {
@@ -25,12 +26,9 @@ export default class Category {
 		const headers = httpService.appendHeaders(httpService.getDefaultHeaders(),
 			"Authorization", `Bearer ${userToken}`)
 
-		httpService.get(`api/books/${this.bookId}/category/${identifier}`, headers, (resp:any) => {
+		httpService.get(`api/books/${this.bookId}/category/${identifier}`, headers, (resp:AxiosResponse) => {
 			this.unmarshall(resp.data)
 			callbackSuccess()
-		}, (error:any) => {
-			console.log("error")
-			console.log(error)
 		})
 	}
 
@@ -38,12 +36,9 @@ export default class Category {
 		const headers = httpService.appendHeaders(httpService.getDefaultHeaders(),
 			"Authorization", `Bearer ${userToken}`)
 
-		httpService.post(`api/books/${this.bookId}/category`, this, headers, (resp: any) => {
+		httpService.post(`api/books/${this.bookId}/category`, this, headers, (resp: AxiosResponse) => {
 			this.unmarshall(resp.data)
 			callbackSuccess()
-		}, (error:any) => {
-			console.log("error")
-			console.log(error)
 		})
 	}
 
@@ -51,11 +46,8 @@ export default class Category {
 		const headers = httpService.appendHeaders(httpService.getDefaultHeaders(),
 			"Authorization", `Bearer ${userToken}`)
 
-		httpService.put(`api/books/${this.bookId}/category`, this, headers, (resp: any) => {
+		httpService.put(`api/books/${this.bookId}/category`, this, headers, (resp: AxiosResponse) => {
 			callbackSuccess()
-		}, (error:any) => {
-			console.log("error")
-			console.log(error)
 		})
 	}
 
@@ -63,11 +55,8 @@ export default class Category {
 		const headers = httpService.appendHeaders(httpService.getDefaultHeaders(),
 			"Authorization", `Bearer ${userToken}`)
 
-		httpService.delete(`api/books/${this.bookId}/category/${this.identifier}`, headers, (resp:any) => {
+		httpService.delete(`api/books/${this.bookId}/category/${this.identifier}`, headers, (resp:AxiosResponse) => {
 			callbackSuccess()
-		}, (error:any) => {
-			console.log("error")
-			console.log(error)
 		})
 	}
 }

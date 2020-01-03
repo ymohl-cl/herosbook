@@ -9,7 +9,7 @@
 					label="Pseudo" placeholder="Pseudo" required solo></v-text-field>
 				<v-text-field v-model="session.user.email" :rules="emailRules" label="Email"
 					placeholder="Email" required solo></v-text-field>
-				<v-text-field v-model="session.user.password" :rules="passwordRules" label="Password"
+				<v-text-field v-model="password" :rules="passwordRules" label="Password"
 					placeholder="Password"  required  solo
 					:append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
 					:type="showPass ? 'text' : 'password'"
