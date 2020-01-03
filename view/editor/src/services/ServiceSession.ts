@@ -1,6 +1,6 @@
 import Book from "@/services/ControllerBook"
 import User from "@/services/ControllerUser"
-import AlertMessage from "@/components/AlertMessage/AlertMessage.vue"
+import AlertMessage from "@/components/AlertMessage/AlertMessage"
 import httpService from "@/services/ServiceHttp"
 
 export class Session {
@@ -35,4 +35,5 @@ export class Session {
 }
 
 const session = new Session()
+
 export default session

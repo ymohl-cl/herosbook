@@ -1,6 +1,6 @@
 <template>
 	<v-app>
-		<AlertMessage ref="AlertMessage"></AlertMessage>
+		<AlertVue  ref="AlertMessage"></AlertVue>
 		<BaseHeader
 			v-bind:connected="session.user.isConnected()"
 			v-bind:pseudo="session.user.pseudo"

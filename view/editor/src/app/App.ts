@@ -2,17 +2,19 @@ import Vue from "vue"
 import Component from "vue-class-component"
 import BaseHeader from "@/components/BaseHeader/BaseHeader.vue"
 import { ItemMenu } from "@/components/BaseHeader/BaseHeader.ts"
-import AlertMessage from "@/components/AlertMessage/AlertMessage.vue"
+import AlertMessage, * as Alert from "@/components/AlertMessage/AlertMessage.ts"
+import AlertVue from "@/components/AlertMessage/AlertMessage.vue"
 import navigation from "@/services/ServiceNavigation"
 import session, { Session } from "@/services/ServiceSession"
 import * as route from "@/router"
 
 @Component({
 	name: "App",
-	components: { BaseHeader, AlertMessage },
+	components: { BaseHeader, AlertVue },
 })
 export default class App extends Vue {
 	session:Session = session
+
 
 	mounted() {
 		// TODO: implement ping method to start or not the application
@@ -21,7 +23,9 @@ export default class App extends Vue {
 		} else {
 			navigation.replaceView(route.resumePagePath)
 		}
+
 		this.session.alert = this.$refs.AlertMessage as AlertMessage
+		this.session.alert.addAlert("test", Alert.ErrorMessage)
 	}
 
 	menuBuilder(): ItemMenu[] {

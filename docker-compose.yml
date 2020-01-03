@@ -53,7 +53,6 @@ services:
         volumes:
             - "./view/editor/:/app/"
         environment:
-          - CHOKIDAR_USEPOLLING=true
           - NODE_ENV=development
           - API_HOST=http://127.0.0.1
           - API_PORT=4242
