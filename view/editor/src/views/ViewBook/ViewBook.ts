@@ -28,6 +28,19 @@ export default class ViewBook extends Vue {
 	titleNewCategory:string = ""
 	categoryToAdd:string = ""
 
+	orphanNodes:Node[] = [new Node(this.book.identifier, "title", "description")]
+	treeNodes:Node[][] = [
+		[new Node(this.book.identifier, "title-1", "description")],
+		[
+			new Node(this.book.identifier, "title-2.1", "description"),
+			new Node(this.book.identifier, "title-2.2", "description"),
+			new Node(this.book.identifier, "title-2.3", "description")
+		],
+		[new Node(this.book.identifier, "title-3", "description")],
+		[new Node(this.book.identifier, "title-4", "description")],
+		[new Node(this.book.identifier, "title-5", "description")],
+		[new Node(this.book.identifier, "title-6", "description")],
+	]
 	displayConfirm:boolean = false
 	callbackSuccessConfirm:any = null
 	callbackCancelConfirm:any = null

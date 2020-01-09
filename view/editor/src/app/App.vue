@@ -9,7 +9,7 @@
 			v-bind:loginFunction="loginView"
 			v-bind:registerFunction="registerView"
 		></BaseHeader>
-		<v-content>
+		<v-content fluid fill-height>
 			<router-view />
 		</v-content>
 	</v-app>
