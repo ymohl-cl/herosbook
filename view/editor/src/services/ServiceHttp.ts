@@ -32,6 +32,7 @@ class Http {
 	}
 
 	sendAlert(resp:AxiosResponse):void {
+		console.log(resp)
 		const err = new ErrorResponse(resp.data)
 		const message = "["+err.id+"]: " + err.message
 		if (resp.status >= 400 && resp.status < 500) {

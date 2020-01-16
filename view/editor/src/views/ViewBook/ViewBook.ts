@@ -4,7 +4,7 @@ import navigation from "@/services/ServiceNavigation"
 import session, { Session } from "@/services/ServiceSession"
 import Book from "@/services/ControllerBook"
 import Node from "@/services/ControllerNode"
-import Category from "@/services/ControllerCategory"
+import Categories, * as Category from "@/services/ControllerCategory"
 import TextEditor from "@/components/TextEditor/TextEditor.vue"
 import ConfirmDialog from "@/components/ConfirmDialog/ConfirmDialog.vue"
 
@@ -17,16 +17,19 @@ import ConfirmDialog from "@/components/ConfirmDialog/ConfirmDialog.vue"
 export default class ViewBook extends Vue {
 	session:Session = session
 	book:Book = new Book("", "", "")
-	editBookMode:boolean = false
-	nodes:Node[] = []
-	nodesDisplayed:Node[] = []
-	currentNode:Node = new Node("", "", "")
-	currentCategoryIdentifier = ""
-	editNodeMode:boolean = false
-	deleteNodeIdentifier:string = ""
-	deleteCategoryIdentifier:string = ""
-	titleNewCategory:string = ""
-	categoryToAdd:string = ""
+	openCategory = false
+	panel = [0, 1, 2]
+	category = new Category.Category()
+//	editBookMode:boolean = false
+//	nodes:Node[] = []
+//	nodesDisplayed:Node[] = []
+//	currentNode:Node = new Node("", "", "")
+//	currentCategoryIdentifier = ""
+//	editNodeMode:boolean = false
+//	deleteNodeIdentifier:string = ""
+//	deleteCategoryIdentifier:string = ""
+//	titleNewCategory:string = ""
+//	categoryToAdd:string = ""
 
 	orphanNodes:Node[] = [new Node(this.book.identifier, "title", "description")]
 	treeNodes:Node[][] = [
@@ -41,28 +44,44 @@ export default class ViewBook extends Vue {
 		[new Node(this.book.identifier, "title-5", "description")],
 		[new Node(this.book.identifier, "title-6", "description")],
 	]
-	displayConfirm:boolean = false
-	callbackSuccessConfirm:any = null
-	callbackCancelConfirm:any = null
-	textConfirm:string = ""
+//	displayConfirm:boolean = false
+//	callbackSuccessConfirm:any = null
+//	callbackCancelConfirm:any = null
+//	textConfirm:string = ""
 
 	mounted() {
 		if (!session.user.isConnected() || this.$route.params.id == null) {
 			navigation.replaceView("/login")
 		} else {
+			console.log("must be ok")	
 			this.book.get(this.$route.params.id, session.user.getToken(), () => {
-				for (let i = 0; i < this.book.nodeIds.length; i += 1) {
+				/*for (let i = 0; i < this.book.nodeIds.length; i += 1) {
 					const node = new Node(this.book.identifier, "", "")
 
 					this.nodes.push(node)
 					node.get(this.book.nodeIds[i], session.user.getToken(), () => {
 						this.generateDisplayNode()
 					})
-				}
+				}*/
 			})
 		}
 	}
-
+	openDialog(type: string) {
+		this.category = new Category.Category
+		this.category.bookId = this.book.identifier
+		this.category.type = type
+		this.openCategory = true
+	}
+	closeDialog() {
+		this.openCategory = false
+	}
+	validDialog() {
+		this.category.record(session.user.getToken(), () => {
+			this.book.categories.addCategory(this.category)
+		})
+		this.closeDialog()
+	}
+/*
 	generateDisplayNode() {
 		this.nodesDisplayed = this.nodes.filter((node:Node) => this.currentCategoryIdentifier === ""
 			|| node.categories.indexOf(this.currentCategoryIdentifier) > -1)
@@ -172,7 +191,7 @@ export default class ViewBook extends Vue {
 		this.currentNode.update(session.user.getToken(), () => {
 			console.log("save node ok")
 			this.generateDisplayNode()
-			this.setEditNodeMode(false) /* TODO necessary to do a feedback */
+			this.setEditNodeMode(false) // TODO necessary to do a feedback
 		})
 	}
 
@@ -199,4 +218,5 @@ export default class ViewBook extends Vue {
 			this.generateDisplayNode()
 		})
 	}
+	*/
 }

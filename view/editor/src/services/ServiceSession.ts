@@ -21,7 +21,9 @@ export class Session {
 	}
 
 	getBooks() {
-		this.books = Books.getBooks(this.user.getToken())
+		Books.getBooks(this.user.getToken(), (jsonData: any) => {
+			this.books = jsonData
+		})
 	}
 }
 

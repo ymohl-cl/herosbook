@@ -1,17 +1,15 @@
 import { AxiosResponse } from "axios"
 import httpService from "@/services/ServiceHttp"
-import Category from "@/services/ControllerCategory"
+import Categories, * as Category from '@/services/ControllerCategory'
 
-export function getBooks(token: string):Book[] {
-	let books: Book[] = []
+export function getBooks(token: string, callbackSuccess: (jsonData: any) => void) {
 	const headers = httpService.appendHeaders(
 		httpService.getDefaultHeaders(),
 		"Authorization", `Bearer ${token}`,
 	)
 	httpService.post("api/books/_searches", {}, headers, (resp: AxiosResponse) => {
-		books = resp.data
+		callbackSuccess(resp.data)
 	})
-	return books
 }
 
 export default class Book {
@@ -23,7 +21,7 @@ export default class Book {
 	owner: string = ""
 	nodeIds: string[] = []
 	creationDate: Date = new Date(0)
-	categories: Category[] = []
+	categories: Categories = new Categories()
 
 	constructor(title: string, description: string, genre: string) {
 		this.title = title
@@ -40,22 +38,40 @@ export default class Book {
 		this.title = json.title
 		this.description = json.description
 		this.genre = json.genre
-		if (json.categories !== null) { // TOUPDATE
-			for (let i = 0; i < json.categories.length; i += 1) {
-				const category = new Category(this.identifier, "", "", "")
-
+		if (json.categories.persons !== null) {
+			for (let i = 0; i < json.categories.persons.length; i += 1) {
+				let category = new Category.Category()
 				category.unmarshall(json.categories[i])
-				this.categories.push(category)
+				this.categories.persons.push(category)
 			}
 		}
+		if (json.categories.locations !== null) {
+			for (let i = 0; i < json.categories.locations.length; i += 1) {
+				let category = new Category.Category()
+				category.unmarshall(json.categories[i])
+				this.categories.locations.push(category)
+			}
+		}
+		if (json.categories.customs !== null) {
+			for (let i = 0; i < json.categories.customs.length; i += 1) {
+				let category = new Category.Category()
+				category.unmarshall(json.categories[i])
+				this.categories.customs.push(category)
+			}
+		}
+		console.log(json.categories.persons.length)
+		console.log(json.categories.locations.length)
+		console.log(json.categories.customs.length)
 	}
 
 	get(identifier:string, userToken:string, callbackSuccess: () => void) {
 		const headers = httpService.appendHeaders(httpService.getDefaultHeaders(),
 			"Authorization", `Bearer ${userToken}`)
 
-		httpService.get(`api/books/${identifier}`, headers, (resp:AxiosResponse) => {
+		console.log("before get request")
+		httpService.get(`api/books/${identifier}`, headers, (resp: AxiosResponse) => {
 			this.unmarshall(resp.data)
+			console.log("hello")
 			callbackSuccess()
 		})
 	}
@@ -86,16 +102,5 @@ export default class Book {
 		httpService.delete(`api/books/${this.identifier}`, headers, (resp:AxiosResponse) => {
 			callbackSuccess()
 		})
-	}
-
-	deleteCategory(userToken:string, catIdentifier:string, callbackSuccess:() => void) {
-		const index = this.categories.findIndex(category => category.identifier === catIdentifier)
-
-		if (index > -1) {
-			this.categories[index].delete(userToken, () => {
-				this.categories.splice(index, 1)
-				callbackSuccess()
-			})
-		}
 	}
 }

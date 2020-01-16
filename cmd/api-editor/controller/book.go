@@ -3,10 +3,11 @@ package controller
 import (
 	"fmt"
 
+	"golang.org/x/xerrors"
+
 	"github.com/ymohl-cl/herosbook/pkg/model"
 	"github.com/ymohl-cl/herosbook/pkg/postgres"
 	"github.com/ymohl-cl/herosbook/pkg/xerror"
-	"golang.org/x/xerrors"
 )
 
 // RecordBook in sql database
@@ -109,7 +110,7 @@ func (c controller) ReadBook(bookID string, userID string) (model.Book, xerror.X
 		}
 		if ok {
 			cat.BookID = bookID
-			b.Categories = append(b.Categories, cat)
+			b.Categories.Add(cat)
 		}
 	}
 

@@ -12,7 +12,7 @@ type Book struct {
 	Owner        string     `json:"owner"`
 	NodeIDS      []string   `json:"nodeIds"`
 	CreationDate time.Time  `json:"creationDate"`
-	Categories   []Category `json:"categories"`
+	Categories   Categories `json:"categories"`
 }
 
 // Validate book json model
